@@ -15,10 +15,10 @@ namespace TravellingThiefProblem.Models
             Y = y;
         }
 
-        public double CalculateDistance(City city)
+        public int CalculateDistance(City city)
         {
             var c = Math.Pow(X - city.X ,2) + Math.Pow(Y - city.Y ,2);
-            return Math.Sqrt(c);
+            return (int)Math.Ceiling(Math.Sqrt(c));
         }
 
         public override string ToString()

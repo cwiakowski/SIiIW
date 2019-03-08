@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TravellingThiefProblem.Models;
+using TravellingThiefProblem.Services.Interfaces;
 
 namespace TravellingThiefProblem.Services
 {
@@ -13,9 +14,9 @@ namespace TravellingThiefProblem.Services
             return path;
         }
 
-        public static double CalculatePathLength(List<int> path, List<City> cities)
+        public static int CalculatePathLength(List<int> path, List<City> cities)
         {
-            var pathLength = 0.0;
+            var pathLength = 0;
 
             for (int i = 0; i < path.Count(); i++)
             {

@@ -13,11 +13,6 @@ namespace TravellingThiefProblem
     {
         static void Main(string[] args)
         {
-            var populationSize = 100;
-            var generations = 100;
-            var px = 0.7;
-            var pm = 0.01;
-            var tour = 5;
 
             DataReader.GenerateFilePaths();
             //DataReader.PrintFilePaths();
@@ -29,8 +24,8 @@ namespace TravellingThiefProblem
 //                new City(4, 0.0, 10.0)
 //            };
 
-            var factory = new ProblemFactory();
-            var problem = factory.GenerateProblem(DataReader.FilePaths[DataReader.FilePaths.Count-1]);
+            var factory = new ProblemProblemFactory();
+            var problem = factory.Generate(DataReader.FilePaths[DataReader.FilePaths.Count-1]);
 
 
             var thief = new Thief(problem);
@@ -44,7 +39,7 @@ namespace TravellingThiefProblem
                 }
 
                 Console.WriteLine(ThiefService.CalculatePathLength(thief.Path, problem.Cities));
-                Console.WriteLine();
+                //Console.WriteLine();
                 PathOperations.MutatePath(thief.Path);
             }
             

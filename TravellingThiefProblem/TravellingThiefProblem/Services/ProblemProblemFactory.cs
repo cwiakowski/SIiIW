@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Collections.Generic;
 using System.Linq;
 using TravellingThiefProblem.Models;
+using TravellingThiefProblem.Services.Interfaces;
+using TravellingThiefProblem.Utilities;
 
-namespace TravellingThiefProblem.Utilities
+namespace TravellingThiefProblem.Services
 {
-    public class ProblemFactory
+    public class ProblemProblemFactory : IProblemFactory
     {
-        public Models.Problem GenerateProblem(string filepath)
+        public Problem Generate(string filepath)
         {
             var raw = DataReader.ReadFile(filepath);
             var lines = raw.Split("\n");
@@ -28,6 +28,7 @@ namespace TravellingThiefProblem.Utilities
                 Items = new List<Item>()
             };
 
+            //first index of Items
             var index = lines.ToList().IndexOf(lines.First(s => s.Contains("ITEMS SECTION")));
             for (int i = 10; i < lines.Length -1; i++)
             {

@@ -17,5 +17,6 @@ namespace TravellingThiefProblem.Models
         public List<City> Cities { get; set; }
         public List<Item> Items { get; set; }
 
+        public int[][] Distances { get; set; }
     }
 }
