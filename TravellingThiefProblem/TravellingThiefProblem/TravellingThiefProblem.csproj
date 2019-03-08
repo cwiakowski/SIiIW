@@ -1,0 +1,82 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Data\easy_0.ttp" />
+    <None Remove="Data\easy_1.ttp" />
+    <None Remove="Data\easy_2.ttp" />
+    <None Remove="Data\easy_3.ttp" />
+    <None Remove="Data\easy_4.ttp" />
+    <None Remove="Data\hard_0.ttp" />
+    <None Remove="Data\hard_1.ttp" />
+    <None Remove="Data\hard_2.ttp" />
+    <None Remove="Data\hard_3.ttp" />
+    <None Remove="Data\hard_4.ttp" />
+    <None Remove="Data\medium_0.ttp" />
+    <None Remove="Data\medium_1.ttp" />
+    <None Remove="Data\medium_2.ttp" />
+    <None Remove="Data\medium_3.ttp" />
+    <None Remove="Data\medium_4.ttp" />
+    <None Remove="Data\trivial_0.ttp" />
+    <None Remove="Data\trivial_1.ttp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Data\easy_0.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\easy_1.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\easy_2.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\easy_3.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\easy_4.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\hard_0.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\hard_1.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\hard_2.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\hard_3.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\hard_4.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\medium_0.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\medium_1.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\medium_2.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\medium_3.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\medium_4.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\trivial_0.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\trivial_1.ttp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>
