@@ -17,12 +17,12 @@ namespace TravellingThiefProblem.Services
         public static int CalculatePathLength(List<int> path, List<City> cities)
         {
             var pathLength = 0;
-
+            ICityService service = new CityService();
             for (int i = 0; i < path.Count(); i++)
             {
                 var city1 = cities.FirstOrDefault(x => x.Id == path[i]);
                 var city2 = cities.FirstOrDefault(x => x.Id == path[(i + 1) % path.Count()]);
-                pathLength += city1.CalculateDistance(city2);
+                pathLength += service.CalculateDistance(city1,city2);
             }
             return pathLength;
         }

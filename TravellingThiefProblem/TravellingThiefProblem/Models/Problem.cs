@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace TravellingThiefProblem.Models
@@ -17,6 +18,26 @@ namespace TravellingThiefProblem.Models
         public List<City> Cities { get; set; }
         public List<Item> Items { get; set; }
 
-        public int[][] Distances { get; set; }
+        public int[,] Distances { get; set; }
+
+        public void PrintDistanceMatrix()
+        {
+            for (int i = 0; i < Dimension; i++)
+            {
+                Console.Write($"\t{i+1}.");
+            }
+            Console.WriteLine();
+            
+            for (int i = 0; i < Dimension; i++)
+            {
+                Console.Write($"{i+1}.\t");
+                for (int j = 0; j < Dimension; j++)
+                {
+                    Console.Write($"{Distances[i, j]}\t");
+                }
+
+                Console.WriteLine();
+            }
+        }
     }
 }

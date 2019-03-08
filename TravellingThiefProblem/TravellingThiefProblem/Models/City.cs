@@ -14,13 +14,6 @@ namespace TravellingThiefProblem.Models
             X = x;
             Y = y;
         }
-
-        public int CalculateDistance(City city)
-        {
-            var c = Math.Pow(X - city.X ,2) + Math.Pow(Y - city.Y ,2);
-            return (int)Math.Ceiling(Math.Sqrt(c));
-        }
-
         public override string ToString()
         {
             return $"{Id}\t({X},\t{Y})";

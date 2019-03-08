@@ -25,7 +25,7 @@ namespace TravellingThiefProblem.Services
                 RentingRatio = double.Parse(lines[7].Substring(lines[7].IndexOf("\t") + 1)),
                 EdgeWeightType = lines[8].Substring(lines[8].IndexOf("\t") + 1),
                 Cities = new List<City>(),
-                Items = new List<Item>()
+                Items = new List<Item>(),
             };
 
             //first index of Items
@@ -42,8 +42,25 @@ namespace TravellingThiefProblem.Services
                     var line = lines[i].Split("\t");
                     problem.Items.Add(new Item(int.Parse(line[0]), int.Parse(line[1]), int.Parse(line[2]), int.Parse(line[3])));
                 }
-            }            
+            }
+
+            problem.Distances = GenerateDistanceMatrix(problem.Dimension, problem.Cities);
             return problem;
+        }
+
+        private int[,] GenerateDistanceMatrix(int dim, List<City> cities)
+        {
+            var service = new CityService();
+            var matrix = new int[dim, dim];
+
+            for (int i = 0; i < dim; i++)
+            {
+                for (int j = 0; j < dim; j++)
+                {
+                    matrix[i, j] = service.CalculateDistance(cities[i], cities[j]);
+                }
+            }
+            return matrix;
         }
     }
 }
