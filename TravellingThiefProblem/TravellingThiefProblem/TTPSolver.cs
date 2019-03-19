@@ -13,12 +13,12 @@ namespace TravellingThiefProblem
     public class TTPSolver
     {
         private int _populationSize = 100;
-        private int _generations = 100;
-        private double _px = 79;                //0-100
-        private double _pm = 1;                 //0-100
+        private int _generations = 500;
+        private double _px = 70;                //0-100
+        private double _pm = 5;                 //0-100
         private int _tour = 5;
         private int _greedyAlgorhitmType = 1;   //0 - Min(Weight); 1 - Max(Profit/Weight); 2 - Max(Profit)
-        private int _selectionType = 1;         //0 - Tour, 1- Ruletka
+        private int _selectionType = 0;         //0 - Tour, 1- Ruletka
         private int _fileIndex = 5;             //0-4 easy, 5-9 hard, 10-14 medium, 15-16 trival
         private IFitnessCalculator _fitc;
         private bool _printLoggerData = true;
@@ -116,7 +116,7 @@ namespace TravellingThiefProblem
             var newGen = new List<Thief>();
             var min = Thieves.Min(x => x.Fitness);
             
-            var offset = 10.0;
+            var offset = 0.0;
             //generate starting probability values
             foreach (var t in Thieves)
             {

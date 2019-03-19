@@ -14,17 +14,18 @@ namespace TravellingThiefProblem.Operations
             list[indexB] = tmp;
         }
 
-        public static void MutatePath(IList<int> list)
+        public static void MutatePath(List<int> list)
         {
             var rnd = new Random();
-            int a = rnd.Next(0, list.Count-1);
+            int a = rnd.Next(0, list.Count);
             int b;
             do
             {
-                b = rnd.Next(0, list.Count);
+                b = rnd.Next(0, list.Count-a);
             } while (b == a);
 
-            Swap(list, a, b);
+            //Swap(list, a, b);
+            list.Reverse(a, b);
         }
 
         public static void Mutate(Thief thief)
