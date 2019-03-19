@@ -2,6 +2,9 @@
 
 namespace TravellingThiefProblem.Models
 {
+    /// <summary>
+    /// Model class
+    /// </summary>
     public class Item
     {
         public int Id { get; set; }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TravellingThiefProblem.Models;
+using TravellingThiefProblem.Operations;
 using TravellingThiefProblem.Services.Interfaces;
 
 namespace TravellingThiefProblem.Services
@@ -17,26 +18,29 @@ namespace TravellingThiefProblem.Services
         public static int CalculatePathLength(List<int> path, List<City> cities)
         {
             var pathLength = 0;
-            ICityService service = new CityService();
             for (int i = 0; i < path.Count(); i++)
             {
                 var city1 = cities.FirstOrDefault(x => x.Id == path[i]);
                 var city2 = cities.FirstOrDefault(x => x.Id == path[(i + 1) % path.Count()]);
-                pathLength += service.CalculateDistance(city1,city2);
+                pathLength += CityService.CalculateDistance(city1,city2);
             }
             return pathLength;
         }
 
-        public static List<int> GenerateTestPath(IEnumerable<City> list)
+        public static List<Thief> GenerateRandomThieves(Problem problem, int popSize)
         {
-            var path = new List<int>
+            var thieves = new List<Thief>();
+
+            for (int i = 0; i < popSize; i++)
             {
-                1,
-                2,
-                3,
-                4
-            };
-            return path;
+                thieves.Add(new Thief(problem));
+            }
+            foreach (var thief in thieves)
+            {
+                thief.GenerateRandomPath(problem.Cities);
+            }
+
+            return thieves;
         }
     }
 }

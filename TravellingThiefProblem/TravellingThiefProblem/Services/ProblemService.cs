@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using TravellingThiefProblem.Models;
 using TravellingThiefProblem.Services.Interfaces;
@@ -6,7 +7,7 @@ using TravellingThiefProblem.Utilities;
 
 namespace TravellingThiefProblem.Services
 {
-    public class ProblemProblemFactory : IProblemFactory
+    public class ProblemService : IProblemService
     {
         public Problem Generate(string filepath)
         {
@@ -45,19 +46,27 @@ namespace TravellingThiefProblem.Services
             }
 
             problem.Distances = GenerateDistanceMatrix(problem.Dimension, problem.Cities);
+            InitializeCitiesItemsList(problem);
             return problem;
         }
 
-        private int[,] GenerateDistanceMatrix(int dim, List<City> cities)
+        private void InitializeCitiesItemsList(Problem problem)
         {
-            var service = new CityService();
+            foreach (var it in problem.Items)
+            {
+                problem.Cities.FirstOrDefault(x => x.Id == it.AssignedNodeNumber)?.Items.Add(it);
+            }
+        }
+
+        public int[,] GenerateDistanceMatrix(int dim, List<City> cities)
+        {
             var matrix = new int[dim, dim];
 
             for (int i = 0; i < dim; i++)
             {
                 for (int j = 0; j < dim; j++)
                 {
-                    matrix[i, j] = service.CalculateDistance(cities[i], cities[j]);
+                    matrix[i, j] = CityService.CalculateDistance(cities[i], cities[j]);
                 }
             }
             return matrix;

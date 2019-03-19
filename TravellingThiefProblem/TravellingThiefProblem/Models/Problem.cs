@@ -4,6 +4,9 @@ using System.Drawing;
 
 namespace TravellingThiefProblem.Models
 {
+    /// <summary>
+    /// ModelClass
+    /// </summary>
     public class Problem
     {
         public string Name { get; set; }

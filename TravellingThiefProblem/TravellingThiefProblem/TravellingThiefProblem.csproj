@@ -79,4 +79,14 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Output\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="26.0.1" />
+    <PackageReference Include="NUnit" Version="3.11.0" />
+    <PackageReference Include="Shouldly" Version="3.0.2" />
+  </ItemGroup>
+
 </Project>

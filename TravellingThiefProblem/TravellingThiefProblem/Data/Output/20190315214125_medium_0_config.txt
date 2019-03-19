@@ -1,0 +1,9 @@
+pop	100
+gen	100
+px	70
+pm	1
+sel	0
+tour	5
+time	00:00:02.1650435
+sort	1
+score	20190315214125_medium_0
