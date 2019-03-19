@@ -112,13 +112,6 @@ namespace TravellingThiefProblem
 
         private void SelectionRoulette()
         {
-            //biore i normalizuje siema
-            //dodaje se offset tak o od buta hha siema eniu
-            //losuje se liczbe
-            //cipka
-            //wybieram se normalnie 
-            //dodaje do nowej listy normalnie
-            //Thieves = Thieves.OrderByDescending(x => x.Fitness).ToList();
             var probabilities = new List<double>();
             var newGen = new List<Thief>();
             var min = Thieves.Min(x => x.Fitness);
@@ -144,7 +137,6 @@ namespace TravellingThiefProblem
                 probsum = probabilities[i];
             }
             var rnd = new Random();
-            //probabilities.Reverse();
             //Selection process
             for (int i = 0; i < _populationSize; i++)
             {
