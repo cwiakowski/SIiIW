@@ -24,7 +24,7 @@ namespace TravellingThiefProblem
         {
             var ttp = new TTPSolver();
             ttp.Start();
-            //ttp.SaveData();
+            ttp.SaveData();
         }
 
         private static void Test()

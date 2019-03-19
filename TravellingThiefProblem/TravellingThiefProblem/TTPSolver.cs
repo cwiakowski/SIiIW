@@ -19,7 +19,7 @@ namespace TravellingThiefProblem
         private int _tour = 5;
         private int _greedyAlgorhitmType = 1;   //0 - Min(Weight); 1 - Max(Profit/Weight); 2 - Max(Profit)
         private int _selectionType = 1;         //0 - Tour, 1- Ruletka
-        private int _fileIndex = 0;             //0-4 easy, 5-9 hard, 10-14 medium, 15-16 trival
+        private int _fileIndex = 5;             //0-4 easy, 5-9 hard, 10-14 medium, 15-16 trival
         private IFitnessCalculator _fitc;
         private bool _printLoggerData = true;
 
@@ -146,7 +146,7 @@ namespace TravellingThiefProblem
                 foreach (var p in probabilities)
                 {
                     
-                    if (last < winner && p > winner)
+                    if (last < winner && winner < p)
                     {
                         newGen.Add(new Thief(Thieves[j]));
                         j = 0;
