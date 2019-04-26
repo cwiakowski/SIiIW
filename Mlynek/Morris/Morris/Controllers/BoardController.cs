@@ -1,5 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using Windows.UI;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Shapes;
 using Morris.Models;
 using Morris.Services;
 
@@ -9,11 +16,69 @@ namespace Morris.Controllers
     {
         public IEnumerable<Mill> Mills { get; set; }
         private Board _board;
+        private Grid _grid;
+        private Color _p1Color = Colors.Blue;
+        private Color _p2Color = Colors.Orange;
+        private Color _emptyColor = Colors.White;
 
-        public BoardController()
+        public Brush Background { get; set; }
+
+        public BoardController(ref Grid grid)
         {
+            _grid = grid;
             _board = new Board();
             Mills = new List<Mill>();
+        }
+
+        public void Layout()
+        {
+            _grid.Children.Clear();
+            _grid.RowDefinitions.Clear();
+            _grid.ColumnDefinitions.Clear();
+
+            _grid.Background = Background;
+            for (int i = 0; i < 7; i++)
+            {
+                _grid.RowDefinitions.Add(new RowDefinition());
+                _grid.ColumnDefinitions.Add(new ColumnDefinition());
+            }
+
+            ColorWholeGrid();
+        }
+
+        public void ColorWholeGrid()
+        {
+            foreach (var field in _board.GetFields())
+            {
+                ColorGridCell(field.GridRow, field.GridCol, field.State, field.Cords);
+            }
+        }
+
+        private void ColorGridCell(int row, int col, FieldState state, string name)
+        {
+            Canvas canvas = new Canvas {Height = 40, Width = 40};
+            TextBlock text = new TextBlock {Text = name, Foreground = new SolidColorBrush(Colors.Black)};
+//            var ellipse1 = new Ellipse();
+//            ellipse1.Fill = new SolidColorBrush(Windows.UI.Colors.SteelBlue);
+//            ellipse1.Width = 38;
+//            ellipse1.Height = 38;
+            if (state == FieldState.Empty)
+            {
+                canvas.Background = new SolidColorBrush(_emptyColor);
+            }
+            else if (state == FieldState.P1)
+            {
+                canvas.Background = new SolidColorBrush(_p1Color);
+            }
+            else if (state == FieldState.P2)
+            {
+                canvas.Background = new SolidColorBrush(_p2Color);
+            }
+            //canvas.Children.Add(ellipse1);
+            canvas.SetValue(Grid.ColumnProperty, col);
+            canvas.SetValue(Grid.RowProperty, row);
+            canvas.Children.Add(text);
+            _grid.Children.Add(canvas);
         }
 
         public bool Move(string start, string stop)
@@ -66,6 +131,7 @@ namespace Morris.Controllers
         public void NewGame()
         {
             _board.InitializeFields();
+            Layout();
         }
 
         public bool IsMill()

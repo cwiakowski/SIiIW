@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using Windows.UI.Popups;
+using Windows.UI.Xaml.Controls;
 using Morris.Models;
 
 namespace Morris.Controllers
@@ -9,11 +10,15 @@ namespace Morris.Controllers
     {
         public BoardController BoardController { get; set; }
         public GameState State { get; set; }
+        private int _moves = 0;
+        private TextBlock _movesTextBlock;
+        private bool _won = false;
 
-        public GameController()
+        public GameController(Grid grid, TextBlock textBlock)
         {
+            _movesTextBlock = textBlock;
             State = GameState.Off;
-            BoardController = new BoardController();
+            BoardController = new BoardController(ref grid);
         }
 
         public bool Act(string input)
@@ -27,6 +32,7 @@ namespace Morris.Controllers
                 var s = input.Split(' ');
                 if (s[0] == "move")
                 {
+                    _moves++;
                     return BoardController.Move(s[1], s[2]);
                 }
                 else if (s[0] == "add")
@@ -87,6 +93,12 @@ namespace Morris.Controllers
         public void GenerateExample()
         {
             BoardController.GenerateExample();
+        }
+
+        public void UpdateBoard()
+        {
+            _movesTextBlock.Text = $"Moves: {_moves / 2}";
+            BoardController.ColorWholeGrid();
         }
     }
 }

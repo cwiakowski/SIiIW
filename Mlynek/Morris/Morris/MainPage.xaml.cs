@@ -29,19 +29,22 @@ namespace Morris
     public sealed partial class MainPage : Page
     {
         //Library lib = new Library();
-        GameController controller = new GameController();
+        private GameController controller;
 
         public MainPage()
         {
             this.InitializeComponent();
             ApplicationView.PreferredLaunchViewSize = new Size(800, 600);
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
-//            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(1400, 1000));
+            controller = new GameController(Display, Moves);
+            //            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(1400, 1000));
         }
 
         private void BtnNew_OnClick(object sender, RoutedEventArgs e)
         {
             //lib.New(Display);
+            Lines.Visibility = Visibility.Visible;
+            Moves.Visibility = Visibility.Visible;
             controller.NewGame();
             UpdateBoard();
             Commands.Text = string.Empty;
@@ -67,7 +70,7 @@ namespace Morris
 
         private void UpdateBoard()
         {
-            Board.Text = controller.BoardStatus();
+            controller.UpdateBoard();
         }
 
 

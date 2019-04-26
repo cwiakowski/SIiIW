@@ -57,6 +57,12 @@ namespace Morris.Services
             }
         }
 
+        public static List<Field> GetFields(this Board board)
+        {
+            var fields = board.OuterFields.Concat(board.MiddleFields).Concat(board.InnerFields).ToList();
+            return fields;
+        }
+
         public static void UpdateField(this Board board, int state, int list, int index)
         {
             if (0 <= index && index < 8)

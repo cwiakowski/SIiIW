@@ -8,15 +8,10 @@
     mc:Ignorable="d"
     
     Background="{ThemeResource SystemControlBackgroundAccentBrush}">
-    
+
+
+
     <Grid Background="{ThemeResource SystemControlBackgroundAccentBrush}">
-        <!-- <Grid Name="Display" -->
-        <!--       HorizontalAlignment="Center" -->
-        <!--       VerticalAlignment="Center" -->
-        <!--       Width="300" -->
-        <!--       Height="300"> -->
-        <!-- -->
-        <!-- </Grid> -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="400"/>
             <ColumnDefinition/>
@@ -47,35 +42,80 @@
                 <Button Content="Send"
                         Name="Send"
                         Click="Send_OnClick"
-                        Width="100"
+                        Width="90"
                         VerticalAlignment="Bottom"                        />
             </StackPanel>
         </RelativePanel>
-        <Grid Grid.Column="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="100"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <TextBlock Grid.Column="1" Grid.Row="0"
-                       Margin="20, 0, 0, 0" VerticalAlignment="Bottom" HorizontalAlignment="Left"
-                       FontSize="20" Text="a b c d e f g "
-                       FontStyle="Italic"/>
-            <TextBlock Grid.Column="0" Grid.Row="1"
-                       Margin="0,10,5,0" VerticalAlignment="Top" HorizontalAlignment="Right"
-                       TextWrapping="Wrap"
-                       Width="10"
-                       FontSize="20" Text="7 6 5 4 3 2 1"
-                       FontStyle="Italic"/>
-            <TextBlock Grid.Column="1" Grid.Row="1"
-                       Name="Board"
-                       Text="empty"
-                       Margin="20, 10, 30, 30" FontSize="20"/>
+        <RelativePanel Grid.Column="1">
             
-        </Grid>
+            <Canvas 
+                RelativePanel.AlignTopWithPanel="True"
+                RelativePanel.AlignLeftWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True"
+                RelativePanel.AlignBottomWithPanel="True"
+                Name="Lines"
+                Visibility="Visible"
+                Height="300" Width="300"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <Line X1="21" Y1="21" X2="280" Y2="21"
+                    Stroke="Black" StrokeThickness="3" />
+                <Line X1="21" Y1="279" X2="279" Y2="279"
+                    Stroke="Black" StrokeThickness="3" />
+                <Line X1="21" Y1="279" X2="21" Y2="21"
+                    Stroke="Black" StrokeThickness="3" />
+                <Line X1="279" Y1="279" X2="279" Y2="21"
+                    Stroke="Black" StrokeThickness="3" />
+                
+                <Line X1="63" Y1="63" X2="237" Y2="63"
+                    Stroke="Black" StrokeThickness="3" />
+                <Line X1="63" Y1="237" X2="237" Y2="237"
+                    Stroke="Black" StrokeThickness="3" />
+                <Line X1="63" Y1="63" X2="63" Y2="237"
+                    Stroke="Black" StrokeThickness="3" />
+                <Line X1="237" Y1="63" X2="237" Y2="237"
+                    Stroke="Black" StrokeThickness="3" />
+                
+                <Line X1="105" Y1="105" X2="195" Y2="105"
+                    Stroke="Black" StrokeThickness="3" />
+                <Line X1="105" Y1="195" X2="195" Y2="195"
+                    Stroke="Black" StrokeThickness="3" />
+                <Line X1="105" Y1="105" X2="105" Y2="195"
+                      Stroke="Black" StrokeThickness="3" />
+                <Line X1="195" Y1="105" X2="195" Y2="195"
+                      Stroke="Black" StrokeThickness="3" />
+
+                <Line X1="150" Y1="21" X2="150" Y2="105"
+                      Stroke="Black" StrokeThickness="3" />
+                <Line X1="150" Y1="195" X2="150" Y2="279"
+                      Stroke="Black" StrokeThickness="3" />
+                <Line X1="21" Y1="150" X2="105" Y2="150"
+                      Stroke="Black" StrokeThickness="3" />
+                <Line X1="195" Y1="150" X2="279" Y2="150"
+                      Stroke="Black" StrokeThickness="3" />
+            </Canvas>
+
+            <Grid RelativePanel.AlignTopWithPanel="True"
+                  RelativePanel.AlignLeftWithPanel="True"
+                  RelativePanel.AlignRightWithPanel="True"
+                  RelativePanel.AlignBottomWithPanel="True"
+
+                  Name="Display"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Width="300" Height="300">
+
+            </Grid>
+
+            <TextBlock Name="Moves"
+                       Text="Moves: "
+                       FontSize="20"
+                       Foreground="White" Visibility="Collapsed"
+                       RelativePanel.AlignTopWithPanel="False"
+                       RelativePanel.AlignRightWithPanel="False"
+                       RelativePanel.AlignBottomWithPanel="True"
+                       RelativePanel.AlignLeftWithPanel="True"/>
+        </RelativePanel>
         
     </Grid>
     <Page.BottomAppBar>
