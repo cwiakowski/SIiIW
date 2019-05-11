@@ -8,6 +8,12 @@
 
         public string Cords { get; set; }
 
+        public override bool Equals(object obj)
+        {
+            Field f = obj as Field;
+            return (GridRow.Equals(f.GridRow) && GridCol.Equals(f.GridCol));
+        }
+
         public override string ToString()
         {
             switch (State)

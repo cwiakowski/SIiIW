@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -14,12 +15,12 @@ namespace Morris.Controllers
 {
     public class BoardController
     {
-        public IEnumerable<Mill> Mills { get; set; }
+        public IEnumerable<Mill> LastMills { get; set; }
         private Board _board;
         private Grid _grid;
-        private Color _p1Color = Colors.Blue;
-        private Color _p2Color = Colors.Orange;
-        private Color _emptyColor = Colors.White;
+        private Color _p1Color = Colors.WhiteSmoke;
+        private Color _p2Color = Colors.Black;
+        private Color _emptyColor = (Color)Application.Current.Resources["SystemAccentColor"];
 
         public Brush Background { get; set; }
 
@@ -27,7 +28,7 @@ namespace Morris.Controllers
         {
             _grid = grid;
             _board = new Board();
-            Mills = new List<Mill>();
+            LastMills = new List<Mill>();
         }
 
         public void Layout()
@@ -48,6 +49,7 @@ namespace Morris.Controllers
 
         public void ColorWholeGrid()
         {
+            _grid.Children.Clear();
             foreach (var field in _board.GetFields())
             {
                 ColorGridCell(field.GridRow, field.GridCol, field.State, field.Cords);
@@ -57,31 +59,45 @@ namespace Morris.Controllers
         private void ColorGridCell(int row, int col, FieldState state, string name)
         {
             Canvas canvas = new Canvas {Height = 40, Width = 40};
+            canvas.Background = new SolidColorBrush(Colors.Transparent);
             TextBlock text = new TextBlock {Text = name, Foreground = new SolidColorBrush(Colors.Black)};
-//            var ellipse1 = new Ellipse();
-//            ellipse1.Fill = new SolidColorBrush(Windows.UI.Colors.SteelBlue);
-//            ellipse1.Width = 38;
-//            ellipse1.Height = 38;
+            var ellipse1 = new Ellipse
+            {
+                Width = 40, Height = 40
+            };
             if (state == FieldState.Empty)
             {
-                canvas.Background = new SolidColorBrush(_emptyColor);
+                Rectangle rec = new Rectangle {Width = 16, Height = 16};
+                Canvas.SetTop(rec, 12);
+                Canvas.SetLeft(rec, 12);
+                rec.Fill = new SolidColorBrush(_emptyColor);
+                Rectangle rec2 = new Rectangle {Width = 18, Height = 18};
+                Canvas.SetTop(rec2, 11);
+                Canvas.SetLeft(rec2, 11);
+                rec2.Fill = new SolidColorBrush(Colors.Black);
+                canvas.Children.Add(rec2);
+                canvas.Children.Add(rec);
             }
             else if (state == FieldState.P1)
             {
-                canvas.Background = new SolidColorBrush(_p1Color);
+                ellipse1.Fill = new SolidColorBrush(_p1Color);
+                canvas.Children.Add(ellipse1);
             }
             else if (state == FieldState.P2)
             {
-                canvas.Background = new SolidColorBrush(_p2Color);
+                ellipse1.Fill = new SolidColorBrush(_p2Color);
+                canvas.Children.Add(ellipse1);
+                text.Foreground = new SolidColorBrush(Colors.WhiteSmoke);
             }
-            //canvas.Children.Add(ellipse1);
             canvas.SetValue(Grid.ColumnProperty, col);
             canvas.SetValue(Grid.RowProperty, row);
+            Canvas.SetTop(text, 10);
+            Canvas.SetLeft(text, 12);
             canvas.Children.Add(text);
             _grid.Children.Add(canvas);
         }
 
-        public bool Move(string start, string stop)
+        public bool Move(string start, string stop, PlayersTurn turn)
         {
             var field1 = _board.Get(start);
             var field2 = _board.Get(stop);
@@ -90,28 +106,44 @@ namespace Morris.Controllers
                 return false;
             }
 
-            if (_board.CountPlayerFields(field1.State) == 3)
+            var fieldState = turn.Equals(PlayersTurn.Player1) ? FieldState.P1 : FieldState.P2;
+
+            if (field1.State == fieldState && field2.State == FieldState.Empty)
             {
-                if (field2.State == FieldState.Empty)
+                if (_board.CountPlayerFields(field1.State) == 3)
+                {
+                    field1.State = field2.State;
+                    field2.State = fieldState;
+                    return true;
+                }
+
+                if (AvailableMoves(start).Contains(field2))
                 {
                     var temp = field1.State;
                     field1.State = field2.State;
-                    field2.State = temp;
-                    Mills = _board.GetMills();
+                    field2.State = temp;                    
                     return true;
                 }
             }
 
-            if (AvailableMoves(start).Contains(field2))
+            return false;
+        }
+
+        public bool RemoveEnemyStone(PlayersTurn playersTurn, string cords)
+        {
+            var field = _board.Get(cords);
+            if (field == null)
             {
-                var temp = field1.State;
-                field1.State = field2.State;
-                field2.State = temp;
-                Mills = _board.GetMills();
+                return false;
+            }
+
+            var fieldState = playersTurn.Equals(PlayersTurn.Player1) ? FieldState.P2 : FieldState.P1;
+            if (field.State == fieldState)
+            {
+                field.State = FieldState.Empty;
                 return true;
             }
 
-            
             return false;
         }
 
@@ -122,8 +154,13 @@ namespace Morris.Controllers
 
         public IEnumerable<Field> AvailableMoves(string cords)
         {
-            var list = _board.GetNeighbors(cords);
             var field = _board.Get(cords);
+            if (field != null)
+            {
+                if (_board.GetFields().Count(f => f.State == field.State) == 3)
+                    return _board.GetFields().Where(f => f.State == FieldState.Empty);
+            }
+            var list = _board.GetNeighbors(cords);
             return list.Where(x => x.State == FieldState.Empty);
         }
 
@@ -134,31 +171,38 @@ namespace Morris.Controllers
             Layout();
         }
 
-        public bool IsMill()
+        public IEnumerable<Mill> GetNewMills()
         {
-            Mills = _board.GetMills();
-            if (Mills.Any())
-            {
-                return false;
-            }
-            return true;
+            List<Mill> mills = new List<Mill>(_board.GetMills());
+            
+            return mills.Except(LastMills);
         }
 
-        public void ChangeValue(int state, int list, int ind)
+        public void UpdateLastMills()
         {
-            _board.UpdateField(state, list, ind);
-            Mills = _board.GetMills();
+            LastMills = _board.GetMills();
         }
 
         public void ChangeValue(int state, string cords)
         {
             _board.UpdateField(state, cords);
-            Mills = _board.GetMills();
         }
 
-        public string GameState()
+        public bool ChangeValue(PlayersTurn turn, string cords)
         {
-            return _board.ToString();
+            var field = _board.GetFields().FirstOrDefault(x => x.Cords == cords);
+            if (field == null)
+            {
+                return false;
+            }
+
+            if (field.State != FieldState.Empty)
+            {
+                return false;
+            }
+
+            field.State = (turn == PlayersTurn.Player1) ? FieldState.P1 : FieldState.P2; 
+            return true;
         }
 
         public void GenerateExample()
@@ -182,6 +226,13 @@ namespace Morris.Controllers
             _board.MiddleFields[6].State = FieldState.P2;
             _board.InnerFields[2].State = FieldState.P2;
             _board.InnerFields[3].State = FieldState.P2;
+        }
+
+
+        public int CalculateAmountOfFields(PlayersTurn playersTurn)
+        {
+            var p = playersTurn.Equals(PlayersTurn.Player1) ? FieldState.P1 : FieldState.P2;
+            return _board.GetFields().Count(x => x.State == p);
         }
     }
 }

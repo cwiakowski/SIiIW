@@ -36,7 +36,7 @@ namespace Morris
             this.InitializeComponent();
             ApplicationView.PreferredLaunchViewSize = new Size(800, 600);
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
-            controller = new GameController(Display, Moves);
+            controller = new GameController(Display, Moves, StateTextBlock);
             //            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(1400, 1000));
         }
 
@@ -62,7 +62,7 @@ namespace Morris
                 Commands.Text = $"{Commands.Text}WRONG COMMAND\n";
             }
 
-            if (controller.State == GameState.On)
+            if (controller.State == GameState.InGame)
             {
                 UpdateBoard();
             }
@@ -87,7 +87,7 @@ namespace Morris
                 {
                     Commands.Text = $"{Commands.Text}WRONG COMMAND\n";
                 }
-                if (controller.State == GameState.On)
+                if (controller.State == GameState.InGame)
                 {
                     UpdateBoard();
                 }

@@ -1,14 +1,17 @@
 ﻿namespace Morris.Models
 {
-    public enum State
+    public enum PlayersTurn
     {
-        
+        Player1,
+        Player2
     }
 
     public enum GameState
     {
-        On,
-        Off
+        InGame,
+        Off,
+        PlacingStones,
+        RemovingStone
     }
 
     public enum FieldState

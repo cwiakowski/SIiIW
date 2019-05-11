@@ -35,7 +35,7 @@
                         RelativePanel.AlignLeftWithPanel="True">
 
                 <TextBox x:Name="CommandInput"
-                         Header="Enter Command:" PlaceholderText="ex. move a1 a4"
+                         Header="Enter Command:" PlaceholderText="ex. a1 or a1 a4"
                          Width="300" HorizontalAlignment="Left"
                          KeyDown="CommandInput_OnKeyDown"/>
 
@@ -47,7 +47,14 @@
             </StackPanel>
         </RelativePanel>
         <RelativePanel Grid.Column="1">
-            
+            <TextBlock Name="StateTextBlock"
+                       Text="Młynek v3.2.5"
+                       FontSize="40"
+                       Style="{ThemeResource TitleTextBlockStyle}" Visibility="Visible"
+                       RelativePanel.AlignTopWithPanel="True"
+                       RelativePanel.AlignRightWithPanel="True"
+                       RelativePanel.AlignLeftWithPanel="True"
+                       TextAlignment="Center"/>
             <Canvas 
                 RelativePanel.AlignTopWithPanel="True"
                 RelativePanel.AlignLeftWithPanel="True"
@@ -110,7 +117,7 @@
             <TextBlock Name="Moves"
                        Text="Moves: "
                        FontSize="20"
-                       Foreground="White" Visibility="Collapsed"
+                       Style="{ThemeResource CaptionTextBlockStyle}" Visibility="Collapsed"
                        RelativePanel.AlignTopWithPanel="False"
                        RelativePanel.AlignRightWithPanel="False"
                        RelativePanel.AlignBottomWithPanel="True"
