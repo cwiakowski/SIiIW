@@ -37,7 +37,8 @@
                 <TextBox x:Name="CommandInput"
                          Header="Enter Command:" PlaceholderText="ex. a1 or a1 a4"
                          Width="300" HorizontalAlignment="Left"
-                         KeyDown="CommandInput_OnKeyDown"/>
+                         KeyDown="CommandInput_OnKeyDown"
+                         KeyUp="CommandInput_OnKeyUp"/>
 
                 <Button Content="Send"
                         Name="Send"
@@ -149,7 +150,7 @@
                           VerticalAlignment="Center"
                           Margin="10" DropDownClosed="ComboBox_OnDropDownClosed">
                     <x:String>RandomBot</x:String>
-                    <x:String>2</x:String>
+                    <x:String>SimpleMinMaxBot</x:String>
                     <x:String>3</x:String>
                     <x:String>4</x:String>
                 </ComboBox>
@@ -164,7 +165,7 @@
                           VerticalAlignment="Center"
                           Margin="10" DropDownClosed="ComboBox2_OnDropDownClosed">
                     <x:String>RandomBot</x:String>
-                    <x:String>2</x:String>
+                    <x:String>SimpleMinMaxBot</x:String>
                     <x:String>3</x:String>
                     <x:String>4</x:String>
                 </ComboBox>

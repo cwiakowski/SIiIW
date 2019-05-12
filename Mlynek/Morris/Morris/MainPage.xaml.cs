@@ -50,7 +50,7 @@ namespace Morris
 
         private void Send_OnClick(object sender, RoutedEventArgs e)
         {
-            if (controller.Act(CommandInput.Text))
+            if (controller.Act(CommandInput.Text.TrimEnd()))
             {
                 CommandInput.Text = string.Empty;
             }
@@ -73,6 +73,19 @@ namespace Morris
                 {
                     Commands.Text = $"{Commands.Text}WRONG COMMAND\n";
                 }
+            }
+
+            if (e.Key == VirtualKey.N)
+            {
+                controller.ActBot();
+            }
+        }
+
+        private void CommandInput_OnKeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.N)
+            {
+                CommandInput.Text = string.Empty;
             }
         }
 
@@ -103,7 +116,6 @@ namespace Morris
                 if (P1AiToggleButton.IsChecked.Value)
                 {
                     ComboBox.Visibility = Visibility.Visible;
-                    
                 }
                 else
                 {
@@ -123,6 +135,10 @@ namespace Morris
             {
                 player1 = PlayerType.RandomBot;
             }
+            else if (ComboBox.SelectedIndex == 1)
+            {
+                player1 = PlayerType.SimpleMinMaxBot;
+            }
         }
 
         private void ComboBox2_OnDropDownClosed(object sender, object o)
@@ -130,6 +146,10 @@ namespace Morris
             if (ComboBox2.SelectedIndex == 0)
             {
                 player2 = PlayerType.RandomBot;
+            }
+            else if (ComboBox2.SelectedIndex == 1)
+            {
+                player2 = PlayerType.SimpleMinMaxBot;
             }
         }
     }

@@ -29,5 +29,17 @@ namespace Morris.Services
             s.Append(7 - field.GridRow);
             field.Cords = s.ToString();
         }
+
+        public static Field Copy(this Field field)
+        {
+            Field f = new Field()
+            {
+                State = field.State,
+                Cords = field.Cords,
+                GridRow = field.GridRow,
+                GridCol = field.GridCol
+            };
+            return f;
+        }
     }
 }

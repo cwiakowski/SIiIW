@@ -181,5 +181,16 @@ namespace Morris.Services
 
             return false;
         }
+
+        public static Board Copy(this Board board)
+        {
+            Board b = new Board
+            {
+                OuterFields = board.OuterFields.Select(x => x.Copy()).ToList(),
+                InnerFields = board.InnerFields.Select(x => x.Copy()).ToList(),
+                MiddleFields = board.MiddleFields.Select(x => x.Copy()).ToList()
+            };
+            return b;
+        }
     }
 }

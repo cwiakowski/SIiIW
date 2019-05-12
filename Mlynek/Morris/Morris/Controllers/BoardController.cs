@@ -16,7 +16,7 @@ namespace Morris.Controllers
     public class BoardController
     {
         public IEnumerable<Mill> LastMills { get; set; }
-        public Board Board { get; private set; }
+        public Board Board { get; set; }
         private Grid _grid;
         private Color _p1Color = Colors.WhiteSmoke;
         private Color _p2Color = Colors.Black;
@@ -191,29 +191,6 @@ namespace Morris.Controllers
 
             field.State = (turn == PlayersTurn.Player1) ? FieldState.P1 : FieldState.P2; 
             return true;
-        }
-
-        public void GenerateExample()
-        {
-            Board.OuterFields[0].State = FieldState.P1;
-            Board.OuterFields[2].State = FieldState.P1;
-            Board.OuterFields[3].State = FieldState.P1;
-            Board.OuterFields[6].State = FieldState.P1;
-            Board.InnerFields[7].State = FieldState.P1;
-            Board.InnerFields[0].State = FieldState.P1;
-            Board.InnerFields[1].State = FieldState.P1;
-            Board.MiddleFields[5].State = FieldState.P1;
-            Board.MiddleFields[2].State = FieldState.P1;
-
-            Board.OuterFields[1].State = FieldState.P2;
-            Board.OuterFields[4].State = FieldState.P2;
-            Board.OuterFields[5].State = FieldState.P2;
-            Board.MiddleFields[1].State = FieldState.P2;
-            Board.MiddleFields[0].State = FieldState.P2;
-            Board.MiddleFields[4].State = FieldState.P2;
-            Board.MiddleFields[6].State = FieldState.P2;
-            Board.InnerFields[2].State = FieldState.P2;
-            Board.InnerFields[3].State = FieldState.P2;
         }
 
 

@@ -53,7 +53,6 @@ namespace Morris.Controllers
 
 //                sb.Append(BoardController.LastMills.Count());
                 BoardController.UpdateLastMills();
-                State = GameState.RemovingStone;
                 //new MessageDialog(sb.ToString(), "Mills").ShowAsync();
             }
             BoardController.UpdateLastMills();
@@ -67,9 +66,28 @@ namespace Morris.Controllers
                 return false;
             }
 
+            if (_playersTurn.Equals(PlayersTurn.Player1) && _bot1 != null)
+                return false;
+
+            if (_playersTurn.Equals(PlayersTurn.Player2) && _bot2 != null)
+                return false;
+
             try
             {
                 var s = input.Split(' ');
+                if (s[0] == "next")
+                {
+                    if (_playersTurn.Equals(PlayersTurn.Player1) && _bot1 != null)
+                        ActBot(_bot1);
+                    else if (_playersTurn.Equals(PlayersTurn.Player2) && _bot2 != null)
+                        ActBot(_bot2);
+                    return true;
+                }
+                if (s[0] == "neigh")
+                {
+                    new MessageDialog(Neigh(s[1]), $"{s[1]} Neighbors").ShowAsync();
+                    return true;
+                }
                 if (s.Length == 1 && State.Equals(GameState.PlacingStones))
                 {
                     if (BoardController.ChangeValue(_playersTurn, s[0]))
@@ -139,20 +157,6 @@ namespace Morris.Controllers
 
                     return res;
                 }
-                else if (s[0] == "next")
-                {
-                    if (_playersTurn.Equals(PlayersTurn.Player1) && _bot1 != null)
-                        ActBot(_bot1);
-                    else if (_playersTurn.Equals(PlayersTurn.Player2) && _bot2 != null)
-                        ActBot(_bot2);
-                    return true;
-                }
-                else if (s[0] == "neigh")
-                {
-                    new MessageDialog(Neigh(s[1]), $"{s[1]} Neighbors").ShowAsync();
-                    return true;
-                }
-
             }
             catch (Exception e)
             {
@@ -162,16 +166,24 @@ namespace Morris.Controllers
             finally
             {
                 UpdateBoard();
-                if (!IsGameOver() && _stepByStepButton.IsChecked.Value)
+                if (_stepByStepButton.IsChecked.Value)
                 {
-                    if (_playersTurn.Equals(PlayersTurn.Player1) && _bot1 != null)
-                        ActBot(_bot1);
-                    if (_playersTurn.Equals(PlayersTurn.Player2) && _bot2 != null)
-                        ActBot(_bot2);
+                    ActBot();
                 }
             }
 
             return false;
+        }
+
+        public void ActBot()
+        {
+            if (!IsGameOver())
+            {
+                if (_playersTurn.Equals(PlayersTurn.Player1) && _bot1 != null)
+                    ActBot(_bot1);
+                else if (_playersTurn.Equals(PlayersTurn.Player2) && _bot2 != null)
+                    ActBot(_bot2);
+            }
         }
 
 
@@ -182,76 +194,31 @@ namespace Morris.Controllers
 
             if (State == GameState.Off)
                 return;
-
-            switch (State)
+            var data = bot.GetBestBoard(BoardController.Board, _stones);
+            BoardController.Board = data.Board;
+            _commandsTextBlock.Text = $"{_commandsTextBlock.Text}{_playersTurn}: {data.Decision}\n";
+            PrintMills();
+            _moves++;
+            if (_stones >= 18)
             {
-                case GameState.InGame:
-                    var tuple = bot.MakeAMove(BoardController.Board);
-                    if (BoardController.Move(tuple.Item1, tuple.Item2, _playersTurn))
-                    {
-                        _commandsTextBlock.Text = $"{_commandsTextBlock.Text}> {_playersTurn}: {tuple.Item1} {tuple.Item2}\n";
-                        _moves++;
-                        if (!BoardController.GetNewMills().Any())
-                        {
-                            NextPlayersTurn();
-                        }
-                        PrintMills();
-                    }
-                    break;
-                case GameState.PlacingStones:
-                    var c = bot.PlaceStone(BoardController.Board);
-                    if (BoardController.ChangeValue(_playersTurn, c))
-                    {
-                        _commandsTextBlock.Text = $"{_commandsTextBlock.Text}+ {_playersTurn}: {c}\n";
-                        if (!BoardController.GetNewMills().Any())
-                        {
-                            NextPlayersTurn();
-                        }
-                        else
-                        {
-                            State = GameState.RemovingStone;
-                        }
-                        _stones++;
-                        if (18 <= _stones)
-                        {
-                            State = GameState.InGame;
-                        }
-                        PrintMills();
-                        
-                    }
-                    break;
-                case GameState.RemovingStone:
-                    var cords = bot.RemoveStone(BoardController.Board);
-                    if (BoardController.RemoveEnemyStone(_playersTurn, cords))
-                    {
-                        _commandsTextBlock.Text = $"{_commandsTextBlock.Text}- {_playersTurn}: {cords}\n";
-                        NextPlayersTurn();
-                        if (18 <= _stones)
-                        {
-                            State = GameState.InGame;
-                        }
-                        else
-                        {
-                            State = GameState.PlacingStones;
-                        }
-                        BoardController.UpdateLastMills();
-                        if (IsGameOver())
-                        {
-                            _headerTextBlock.Text = "Mlynek v3.2.5";
-                            State = GameState.Off;
-                            new MessageDialog($"{_playersTurn} IS A LOSER", "GAME OVER").ShowAsync();
-                        }
-                    }
-
-                    break;
+                State = GameState.InGame;
+            }
+            else
+            {
+                State = GameState.PlacingStones;
+                _stones++;
+            }
+            NextPlayersTurn();
+            if (IsGameOver())
+            {
+                _headerTextBlock.Text = "Mlynek v3.2.5";
+                State = GameState.Off;
+                new MessageDialog($"{_playersTurn} IS A LOSER", "GAME OVER").ShowAsync();
             }
             UpdateBoard();
-            if (!IsGameOver() && _stepByStepButton.IsChecked.Value)
+            if (_stepByStepButton.IsChecked.Value)
             {
-                if (_playersTurn.Equals(PlayersTurn.Player1) && _bot1 != null)
-                    ActBot(_bot1);
-                if (_playersTurn.Equals(PlayersTurn.Player2) && _bot2 != null)
-                    ActBot(_bot2);
+                ActBot();
             }
         }
 
@@ -312,14 +279,6 @@ namespace Morris.Controllers
         }
 
 
-        public void GenerateExample()
-        {
-            BoardController.GenerateExample();
-            _stones = 18;
-            State = GameState.InGame;
-            _playersTurn = PlayersTurn.Player1;
-            UpdateBoard();
-        }
 
         public void UpdateBoard()
         {
@@ -330,23 +289,8 @@ namespace Morris.Controllers
 
         public void GenerateBots(PlayerType p1, PlayerType p2)
         {
-            if (p1.Equals(PlayerType.RandomBot))
-            {
-                _bot1 = new RandomBot(FieldState.P1, p1);
-            }
-            else if(p1.Equals(PlayerType.Human))
-            {
-                _bot1 = null;
-            }
-
-            if (p2.Equals(PlayerType.RandomBot))
-            {
-                _bot2 = new RandomBot(FieldState.P2, p2);
-            }
-            else if (p2.Equals(PlayerType.Human))
-            {
-                _bot2 = null;
-            }
+            _bot1 = BotFactory.GenerateABot(FieldState.P1, p1, ref _movesTextBlock);
+            _bot2 = BotFactory.GenerateABot(FieldState.P2, p2, ref _movesTextBlock);
         }
 
         private void NextPlayersTurn()
