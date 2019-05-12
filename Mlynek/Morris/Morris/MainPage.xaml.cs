@@ -28,33 +28,30 @@ namespace Morris
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        //Library lib = new Library();
         private GameController controller;
+        private PlayerType player1 = PlayerType.Human;
+        private PlayerType player2 = PlayerType.Human;
 
         public MainPage()
         {
             this.InitializeComponent();
             ApplicationView.PreferredLaunchViewSize = new Size(800, 600);
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
-            controller = new GameController(Display, Moves, StateTextBlock);
-            //            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(1400, 1000));
+            controller = new GameController(Display, Moves, StateTextBlock, ref Commands, ref BtnRandom);
         }
 
         private void BtnNew_OnClick(object sender, RoutedEventArgs e)
         {
-            //lib.New(Display);
             Lines.Visibility = Visibility.Visible;
             Moves.Visibility = Visibility.Visible;
-            controller.NewGame();
-            UpdateBoard();
             Commands.Text = string.Empty;
+            controller.NewGame(player1, player2);
         }
 
         private void Send_OnClick(object sender, RoutedEventArgs e)
         {
             if (controller.Act(CommandInput.Text))
             {
-                Commands.Text = $"{Commands.Text}> {CommandInput.Text}\n";
                 CommandInput.Text = string.Empty;
             }
             else
@@ -62,17 +59,7 @@ namespace Morris
                 Commands.Text = $"{Commands.Text}WRONG COMMAND\n";
             }
 
-            if (controller.State == GameState.InGame)
-            {
-                UpdateBoard();
-            }
         }
-
-        private void UpdateBoard()
-        {
-            controller.UpdateBoard();
-        }
-
 
         private void CommandInput_OnKeyDown(object sender, KeyRoutedEventArgs e)
         {
@@ -80,27 +67,13 @@ namespace Morris
             {
                 if (controller.Act(CommandInput.Text))
                 {
-                    Commands.Text = $"{Commands.Text}> {CommandInput.Text}\n";
                     CommandInput.Text = string.Empty;
                 }
                 else
                 {
                     Commands.Text = $"{Commands.Text}WRONG COMMAND\n";
                 }
-                if (controller.State == GameState.InGame)
-                {
-                    UpdateBoard();
-                }
             }
-        }
-
-        private void BtnRandom_OnClick(object sender, RoutedEventArgs e)
-        {
-            controller.NewGame();
-            
-            Commands.Text = string.Empty;
-            controller.GenerateExample();
-            UpdateBoard();
         }
 
         private  void P2AiToggleButton_OnClick(object sender, RoutedEventArgs e)
@@ -114,6 +87,7 @@ namespace Morris
                 else
                 {
                     ComboBox2.Visibility = Visibility.Collapsed;
+                    player2 = PlayerType.RandomBot;
                 }
             }
             catch (Exception ex)
@@ -129,15 +103,33 @@ namespace Morris
                 if (P1AiToggleButton.IsChecked.Value)
                 {
                     ComboBox.Visibility = Visibility.Visible;
+                    
                 }
                 else
                 {
                     ComboBox.Visibility = Visibility.Collapsed;
+                    player1 = PlayerType.Human;
                 }
             }
             catch (Exception ex)
             {
                 new MessageDialog(ex.StackTrace, $"Error {ex.Message}").ShowAsync();
+            }
+        }
+
+        private void ComboBox_OnDropDownClosed(object sender, object o)
+        {
+            if (ComboBox.SelectedIndex == 0)
+            {
+                player1 = PlayerType.RandomBot;
+            }
+        }
+
+        private void ComboBox2_OnDropDownClosed(object sender, object o)
+        {
+            if (ComboBox2.SelectedIndex == 0)
+            {
+                player2 = PlayerType.RandomBot;
             }
         }
     }

@@ -63,32 +63,9 @@ namespace Morris.Services
             return fields;
         }
 
-        public static void UpdateField(this Board board, int state, int list, int index)
-        {
-            if (0 <= index && index < 8)
-            {
-                switch (list)
-                {
-                    case 0:
-                        board.OuterFields[index].UpdateState(state);
-                        break;
-                    case 1:
-                        board.MiddleFields[index].UpdateState(state);
-                        break;
-                    case 2:
-                        board.InnerFields[index].UpdateState(state);
-                        break;
-                }
-            }
-        }
-
         public static IEnumerable<Field> GetNeighbors(this Board board, string cords)
         {
             var neighbors = new List<Field>();
-            //biore se chlopa
-            //biore sasiadow z listy
-            //patrze czy jest na krzyzowce
-            //biore z innych siema
             var field = Get(board, cords);
             if (board.OuterFields.Contains(field))
             {
@@ -135,10 +112,16 @@ namespace Morris.Services
             return neighbors;
         }
 
-        public static void UpdateField(this Board board, int state, string cords)
+        public static IEnumerable<Field> GetAvailableMoves(this Board board, string cords)
         {
             var field = Get(board, cords);
-            field?.UpdateState(state);
+            if (field != null)
+            {
+                if (GetFields(board).Count(f => f.State == field.State) == 3)
+                    return GetFields(board).Where(f => f.State == FieldState.Empty);
+            }
+            var list = GetNeighbors(board, cords);
+            return list.Where(x => x.State == FieldState.Empty);
         }
 
         public static Field Get(this Board board, string cords)
