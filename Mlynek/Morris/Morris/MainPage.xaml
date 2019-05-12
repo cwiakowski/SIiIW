@@ -35,7 +35,7 @@
                         RelativePanel.AlignLeftWithPanel="True">
 
                 <TextBox x:Name="CommandInput"
-                         Header="Enter Command:" PlaceholderText="ex. a1 or a1 a4"
+                         Header="Enter Command:" PlaceholderText="ex. a1/a1 a4/n"
                          Width="300" HorizontalAlignment="Left"
                          KeyDown="CommandInput_OnKeyDown"
                          KeyUp="CommandInput_OnKeyUp"/>
