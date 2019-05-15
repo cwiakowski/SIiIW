@@ -72,6 +72,8 @@ namespace Morris.Controllers
             if (_playersTurn.Equals(PlayersTurn.Player2) && _bot2 != null)
                 return false;
 
+            BoardController.UpdateLastMills();
+
             try
             {
                 var s = input.Split(' ');
@@ -151,7 +153,10 @@ namespace Morris.Controllers
                         {
                             NextPlayersTurn();
                         }
-                        PrintMills();
+                        else
+                        {
+                            State = GameState.RemovingStone;
+                        }
                         
                     }
 
@@ -199,14 +204,14 @@ namespace Morris.Controllers
             _commandsTextBlock.Text = $"{_commandsTextBlock.Text}{_playersTurn}: {data.Decision}\n";
             PrintMills();
             _moves++;
+            _stones++;
             if (_stones >= 18)
             {
                 State = GameState.InGame;
             }
             else
             {
-                State = GameState.PlacingStones;
-                _stones++;
+                State = GameState.PlacingStones;                
             }
             NextPlayersTurn();
             if (IsGameOver())

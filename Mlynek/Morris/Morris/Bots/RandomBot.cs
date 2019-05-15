@@ -77,12 +77,12 @@ namespace Morris.Bots
 //                placedStones++;
                 var stone = PlaceStone(board);
                 var b = board.Copy();
-                b.Get(stone).State = PlayersState;
                 var mills = b.GetMills().ToList();
+                b.Get(stone).State = PlayersState;
                 string rs = string.Empty;
                 if (b.GetMills().Except(mills).Any())
                 {
-                    b.Get(RemoveStone(b)).State = FieldState.Empty;
+                    rs = RemoveStone(b);
                     b.Get(rs).State = FieldState.Empty;
                 }
                 var sh = new ScoreHolder() { Board = b, Decision = $"{stone}" };
