@@ -58,6 +58,7 @@ namespace Morris.Bots
                 var temp = field1.State;
                 field1.State = field2.State;
                 field2.State = temp;
+                b.UpdateLastMove(field1.Cords, field2.Cords, field2.State);
                 string rs = string.Empty;
                 if (b.GetMills().Except(mills).Any())
                 {

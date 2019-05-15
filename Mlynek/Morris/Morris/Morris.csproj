@@ -132,6 +132,7 @@
     <Compile Include="Models\Board.cs" />
     <Compile Include="Models\Field.cs" />
     <Compile Include="Models\Mill.cs" />
+    <Compile Include="Models\Move.cs" />
     <Compile Include="Models\PlayerType.cs" />
     <Compile Include="Models\ScoreHolder.cs" />
     <Compile Include="Models\State.cs" />

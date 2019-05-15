@@ -110,10 +110,19 @@ namespace Morris.Controllers
 
             if (field1.State == fieldState && field2.State == FieldState.Empty)
             {
+                var move = fieldState.Equals(FieldState.P1) ? Board.LastP1Moves : Board.LastP2Moves;
+                    
+                if (move.Start == field2.Cords && move.Stop == field1.Cords)
+                {
+                    return false;
+                }
+
                 if (Board.CountPlayerFields(field1.State) == 3)
                 {
                     field1.State = field2.State;
                     field2.State = fieldState;
+                    Board.UpdateLastMove(field1.Cords, field2.Cords, field2.State);
+                    
                     return true;
                 }
 
@@ -121,7 +130,8 @@ namespace Morris.Controllers
                 {
                     var temp = field1.State;
                     field1.State = field2.State;
-                    field2.State = temp;                    
+                    field2.State = temp;
+                    Board.UpdateLastMove(field1.Cords, field2.Cords, field2.State);
                     return true;
                 }
             }

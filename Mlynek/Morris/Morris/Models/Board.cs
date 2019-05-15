@@ -9,6 +9,9 @@ namespace Morris.Models
         public List<Field> OuterFields { get; set; }
         public List<Field> MiddleFields { get; set; }
         public List<Field> InnerFields { get; set; }
+        public Move LastP1Moves { get; set; }
+        public Move LastP2Moves { get; set; }
+
 
         public override string ToString()
         {

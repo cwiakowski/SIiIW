@@ -66,13 +66,13 @@ namespace Morris.Controllers
                 return false;
             }
 
-            if (_playersTurn.Equals(PlayersTurn.Player1) && _bot1 != null)
-                return false;
-
-            if (_playersTurn.Equals(PlayersTurn.Player2) && _bot2 != null)
-                return false;
-
-            BoardController.UpdateLastMills();
+//            if (_playersTurn.Equals(PlayersTurn.Player1) && _bot1 != null)
+//                return false;
+//
+//            if (_playersTurn.Equals(PlayersTurn.Player2) && _bot2 != null)
+//                return false;
+//
+//            BoardController.UpdateLastMills();
 
             try
             {
@@ -82,6 +82,15 @@ namespace Morris.Controllers
                     new MessageDialog(Neigh(s[1]), $"{s[1]} Neighbors").ShowAsync();
                     return true;
                 }
+
+                if (_playersTurn.Equals(PlayersTurn.Player1) && _bot1 != null)
+                    return false;
+
+                if (_playersTurn.Equals(PlayersTurn.Player2) && _bot2 != null)
+                    return false;
+
+                BoardController.UpdateLastMills();
+
                 if (s.Length == 1 && State.Equals(GameState.PlacingStones))
                 {
                     if (BoardController.ChangeValue(_playersTurn, s[0]))

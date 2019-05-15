@@ -51,10 +51,16 @@ namespace Morris.Services
             {
                 field.UpdateCords();
             }
+
             foreach (var field in board.InnerFields)
             {
                 field.UpdateCords();
             }
+
+            if (board.LastP1Moves == null)
+                board.LastP1Moves = new Move() { Start = string.Empty, Stop = string.Empty, Player = FieldState.P1 };
+            if (board.LastP2Moves == null)
+                board.LastP2Moves = new Move() { Start = string.Empty, Stop = string.Empty, Player = FieldState.P2 };
         }
 
         public static List<Field> GetFields(this Board board)
@@ -115,13 +121,39 @@ namespace Morris.Services
         public static IEnumerable<Field> GetAvailableMoves(this Board board, string cords)
         {
             var field = Get(board, cords);
-            if (field != null)
+            if (field.State.Equals(FieldState.Empty))
             {
-                if (GetFields(board).Count(f => f.State == field.State) == 3)
-                    return GetFields(board).Where(f => f.State == FieldState.Empty);
+                return null;
             }
-            var list = GetNeighbors(board, cords);
-            return list.Where(x => x.State == FieldState.Empty);
+            
+
+            var lastMove = field.State.Equals(FieldState.P1) ? board.LastP1Moves : board.LastP2Moves;
+            List<Field> list;
+            if (GetFields(board).Count(f => f.State == field.State) == 3)
+                list = GetFields(board).Where(f => f.State == FieldState.Empty).ToList();
+            else
+            {
+                list = GetNeighbors(board, cords).Where(x => x.State == FieldState.Empty).ToList();
+            }
+            for (int i = 0; i < list.Count; i++)
+                if (list[i].Cords.Equals(lastMove.Start) && cords.Equals(lastMove.Stop))
+                {
+                    list.RemoveAt(i);
+                }
+            return list;
+        }
+
+        public static void UpdateLastMove(this Board board, string start, string stop, FieldState state)
+        {
+            var move = new Move {Player = state, Start = start, Stop = stop};
+            if (state.Equals(FieldState.P1))
+            {
+                board.LastP1Moves = move;
+            }
+            else if (state.Equals(FieldState.P2))
+            {
+                board.LastP2Moves = move;
+            }
         }
 
         public static Field Get(this Board board, string cords)
@@ -188,7 +220,9 @@ namespace Morris.Services
             {
                 OuterFields = board.OuterFields.Select(x => x.Copy()).ToList(),
                 InnerFields = board.InnerFields.Select(x => x.Copy()).ToList(),
-                MiddleFields = board.MiddleFields.Select(x => x.Copy()).ToList()
+                MiddleFields = board.MiddleFields.Select(x => x.Copy()).ToList(),
+                LastP1Moves = new Move() { Start = board.LastP1Moves.Start, Stop = board.LastP1Moves.Stop, Player = board.LastP1Moves.Player},
+                LastP2Moves = new Move() { Start = board.LastP2Moves.Start, Stop = board.LastP2Moves.Stop, Player = board.LastP2Moves.Player}
             };
             return b;
         }
