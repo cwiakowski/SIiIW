@@ -96,11 +96,11 @@ namespace Morris.Controllers
                             State = GameState.RemovingStone;
                         }
                         _stones++;
-                        if (18 <= _stones)
+                        if (18 <= _stones && !State.Equals(GameState.RemovingStone))
                         {
                             State = GameState.InGame;
                         }
-                        PrintMills();
+                        //PrintMills();
                         
                         return true;
                     }
