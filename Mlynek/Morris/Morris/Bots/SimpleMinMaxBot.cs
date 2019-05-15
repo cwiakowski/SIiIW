@@ -31,156 +31,125 @@ namespace Morris.Bots
                 .Count(x => x.State.Equals(_enemyState))*2;
         }
 
-        public void UpdateDecisionTree(TreeNode<ScoreHolder> node, Board board)
+        public double UpdateDecisionTree(TreeNode<ScoreHolder> node, Board board, int placedStones, bool maximizing = true)
         {
-            if (node.Depth > _maxDepth)
+            //If node i s a leaf return calculated value (some kind of heury)
+            if (node.Level >= _maxDepth)
             {
-                return;
+                var data = node.Data;
+                data.Score = CalculateBoardState(board);
+                return data.Score;
             }
 
-            ScoreHolder scoreHolder;
-            if (node.IsRoot)
+            // Adding possible moves
+            if (18 <= placedStones)
             {
-                scoreHolder = node.Data;
-            }
-            else
-            {
-                scoreHolder = node.Parent.Data;
-            }
-            
-            if (18 <= scoreHolder.PlacedStones)
-            {
-                //moving stones 
-                List<Field> playersField = scoreHolder.Board.GetFields().Where(x => x.State.Equals(scoreHolder.PlayersTurn)).ToList();
-                foreach (var field in playersField)
+                //GameState == InGame
+                List<Field> playersFields;
+                if (maximizing)
                 {
-                    List<Field> moves = scoreHolder.Board.GetAvailableMoves(field.Cords).ToList();
-                    foreach (var move in moves)
+                    playersFields = board.GetFields().Where(x => x.State == PlayersState).ToList();
+                }
+                else
+                {
+                    playersFields = board.GetFields().Where(x => x.State == _enemyState).ToList();
+                }
+
+                foreach (var f in playersFields)
+                {
+                    var possibleMoves = board.GetAvailableMoves(f.Cords);
+                    foreach (var move in possibleMoves)
                     {
-                        var newScoreHolder = new ScoreHolder() { Board = scoreHolder.Board.Copy(), PlayersTurn = scoreHolder.PlayersTurn.Equals(FieldState.P1) ? FieldState.P2 : FieldState.P1, PlacedStones = scoreHolder.PlacedStones, Decision = $"{field.Cords} {move.Cords}" };
-                        var field1 = newScoreHolder.Board.Get(field.Cords);
-                        var field2 = newScoreHolder.Board.Get(move.Cords);
+                        var moveSh = new ScoreHolder() { Board = board.Copy(), Decision = $"{f.Cords} {move.Cords}", PlacedStones = placedStones };
+                        var field1 = moveSh.Board.Get(f.Cords);
+                        var field2 = moveSh.Board.Get(move.Cords);
                         var temp = field1.State;
                         field1.State = field2.State;
                         field2.State = temp;
-                        if (newScoreHolder.Board.GetMills().Except(scoreHolder.Board.GetMills()).Any())
+                        moveSh.Board.UpdateLastMove(field1.Cords, field2.Cords, field2.State);
+                        if (moveSh.Board.GetMills().Except(board.GetMills()).Any())
                         {
-                            var fieldsToDelete = newScoreHolder.Board.GetFields().Where(x =>
-                                x.State.Equals(newScoreHolder.PlayersTurn.Equals(FieldState.P1)
-                                    ? FieldState.P2
-                                    : FieldState.P1)).ToList();
-                            foreach (var fd in fieldsToDelete)
+                            //GameState == RemovingStones
+                            List<Field> stonesToDelete;
+                            if (maximizing)
                             {
-                                var delScoreHolder = new ScoreHolder()
-                                {
-                                    Board = newScoreHolder.Board.Copy(),
-                                    PlayersTurn = newScoreHolder.PlayersTurn,
-                                    Decision = $"{field.Cords} {move.Cords}"
-                                };
-                                delScoreHolder.Board.Get(fd.Cords).State = FieldState.Empty;
-                                delScoreHolder.Mills = delScoreHolder.Board.GetMills().ToList();
-                                node.AddChild(delScoreHolder);
+                                stonesToDelete = board.GetFields().Where(x => x.State == _enemyState).ToList();
+                            }
+                            else
+                            {
+                                stonesToDelete = board.GetFields().Where(x => x.State == PlayersState).ToList();
+                            }
+
+                            foreach (var del in stonesToDelete)
+                            {
+                                var delSh = new ScoreHolder() { Board = moveSh.Board.Copy(), Decision = $"{moveSh.Decision} - {del.Cords}", PlacedStones = moveSh.PlacedStones };
+                                delSh.Board.Get(del.Cords).State = FieldState.Empty;
+                                node.AddChild(delSh);
                             }
                         }
                         else
                         {
-                            newScoreHolder.Mills = newScoreHolder.Board.GetMills().ToList();
-                            node.AddChild(newScoreHolder);
+                            node.AddChild(moveSh);
                         }
                     }
-
                 }
             }
             else
             {
-                List<Field> empty = scoreHolder.Board.GetFields()
-                    .Where(x => x.State.Equals(FieldState.Empty)).ToList();
-                foreach (var f in empty)
+                //GameState == PlacingStones
+                var possiblePlaces = board.GetFields().Where(x => x.State.Equals(FieldState.Empty)).ToList();
+                foreach (var f in possiblePlaces)
                 {
-                    var newScoreHolder = new ScoreHolder() { Board = scoreHolder.Board.Copy(), PlayersTurn = scoreHolder.PlayersTurn.Equals(FieldState.P1) ? FieldState.P2 : FieldState.P1, PlacedStones = scoreHolder.PlacedStones, Decision = $"{f.Cords}" };
-                    if (newScoreHolder.Board.GetMills().Except(scoreHolder.Board.GetMills()).Any())
+                    var sh = new ScoreHolder() {Board = board.Copy(), Decision = f.Cords, PlacedStones = placedStones+1};
+                    sh.Board.Get(f.Cords).State = maximizing ? PlayersState : _enemyState;
+                    if (sh.Board.GetMills().Except(board.GetMills()).Any())
                     {
-                        var fieldsToDelete = newScoreHolder.Board.GetFields().Where(x =>
-                            x.State.Equals(newScoreHolder.PlayersTurn.Equals(FieldState.P1)
-                                ? FieldState.P2
-                                : FieldState.P1)).ToList();
-                        foreach (var fd in fieldsToDelete)
+                        //GameState == RemovingStones
+                        List<Field> stonesToDelete;
+                        if (maximizing)
                         {
-                            var delScoreHolder = new ScoreHolder()
-                            {
-                                Board = newScoreHolder.Board.Copy(),
-                                PlayersTurn = newScoreHolder.PlayersTurn,
-                                Decision = $"{f.Cords}"
-                            };
-                            delScoreHolder.Board.Get(fd.Cords).State = FieldState.Empty;
-                            delScoreHolder.Mills = delScoreHolder.Board.GetMills().ToList();
-                            node.AddChild(delScoreHolder);
+                            stonesToDelete = board.GetFields().Where(x => x.State == _enemyState).ToList();
+                        }
+                        else
+                        {
+                            stonesToDelete = board.GetFields().Where(x => x.State == PlayersState).ToList();
+                        }
+
+                        foreach (var del in stonesToDelete)
+                        {
+                            var delSh = new ScoreHolder() {Board = sh.Board.Copy(), Decision = $"{sh.Decision} - {del.Cords}", PlacedStones = sh.PlacedStones};
+                            delSh.Board.Get(del.Cords).State = FieldState.Empty;
+                            node.AddChild(delSh);
                         }
                     }
                     else
                     {
-                        newScoreHolder.Mills = newScoreHolder.Board.GetMills().ToList();
-                        newScoreHolder.Board.Get(newScoreHolder.Decision).State = newScoreHolder.PlayersTurn;
-                        node.AddChild(newScoreHolder);
+                        node.AddChild(sh);
                     }
                 }
             }
-
+            //Calculate Score for all possible moves
             foreach (var child in node.Children)
             {
-                UpdateDecisionTree(child, child.Data.Board);
+                child.Data.Mills = child.Data.Board.GetMills().ToList();
+                child.Data.Score = UpdateDecisionTree(child, child.Data.Board, placedStones, !maximizing);
             }
-        }
-
-        public void UpdateDecisionTree(Board board, int placedStones)
-        {
-            var scoreHolder = new ScoreHolder()
-                {Board = board.Copy(), Mills = board.GetMills().ToList(), PlacedStones = placedStones, PlayersTurn = _enemyState};
-            _decisionTree = new TreeNode<ScoreHolder>(scoreHolder, 0);
-            UpdateDecisionTree(_decisionTree, _decisionTree.Data.Board);   
-        }
-
-        public void UpdateTreeScores(TreeNode<ScoreHolder> node)
-        {
-            if (!node.IsLeaf)
+            //Select value, depending if we are maximizing or minimizing score
+            if (maximizing)
             {
-                foreach (var child in node.Children)
-                {
-                    UpdateTreeScores(child);
-                }
-
-                if (node.Depth % 2 == 1)
-                {
-                    node.Data.Score = node.Children.Max(x => x.Data.Score);
-                }
-                else
-                {
-                    node.Data.Score = node.Children.Min(x => x.Data.Score); ;
-                }
+                return node.Children.Select(x => x.Data.Score).OrderByDescending(x => x).FirstOrDefault();
             }
             else
             {
-                if (node.Depth % 2 == 1)
-                {
-                    node.Data.Score = CalculateBoardState(node.Data.Board);
-                }
-                else
-                {
-                    node.Data.Score = CalculateBoardState(node.Data.Board, true);
-                }
-            }
-
-            if (node.IsRoot)
-            {
-                node.Data = node.Data;
+                return node.Children.Select(x => x.Data.Score).OrderBy(x => x).FirstOrDefault();
             }
         }
 
 
         public override ScoreHolder GetBestBoard(Board board, int placedStones)
         {
-            UpdateDecisionTree(board, placedStones);
-            UpdateTreeScores(_decisionTree);
+            _decisionTree = new TreeNode<ScoreHolder>(new ScoreHolder());
+            UpdateDecisionTree(_decisionTree, board, placedStones);
             var data = _decisionTree.Children.OrderByDescending(x => x.Data.Score).FirstOrDefault()?.Data;
             return data;
         }

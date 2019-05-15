@@ -12,39 +12,24 @@ namespace Morris.Models
         public TreeNode<T> Parent { get; set; }
         public ICollection<TreeNode<T>> Children { get; set; }
 
-        public bool IsRoot
-        {
-            get { return Parent == null; }
-        }
+        public bool IsRoot => Parent == null;
 
-        public bool IsLeaf
-        {
-            get { return Children.Count == 0; }
-        }
+        public bool IsLeaf => Children.Count == 0;
 
-        public int Level
-        {
-            get
-            {
-                if (this.IsRoot)
-                    return 0;
-                return Parent.Level + 1;
-            }
-        }
+        public int Level => this.IsRoot ? 0 : Parent.Level + 1;
 
 
-        public TreeNode(T data, int depth)
+        public TreeNode(T data)
         {
             this.Data = data;
             this.Children = new LinkedList<TreeNode<T>>();
-            Depth = depth;
             this.ElementsIndex = new LinkedList<TreeNode<T>>();
             this.ElementsIndex.Add(this);
         }
 
         public TreeNode<T> AddChild(T child)
         {
-            TreeNode<T> childNode = new TreeNode<T>(child, Depth + 1) { Parent = this };
+            TreeNode<T> childNode = new TreeNode<T>(child) { Parent = this };
             this.Children.Add(childNode);
 
             this.RegisterChildForSearch(childNode);
