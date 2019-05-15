@@ -58,7 +58,6 @@ namespace Morris
             {
                 Commands.Text = $"{Commands.Text}WRONG COMMAND\n";
             }
-
         }
 
         private void CommandInput_OnKeyDown(object sender, KeyRoutedEventArgs e)

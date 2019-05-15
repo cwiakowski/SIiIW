@@ -77,15 +77,7 @@ namespace Morris.Controllers
             try
             {
                 var s = input.Split(' ');
-                if (s[0] == "next")
-                {
-                    if (_playersTurn.Equals(PlayersTurn.Player1) && _bot1 != null)
-                        ActBot(_bot1);
-                    else if (_playersTurn.Equals(PlayersTurn.Player2) && _bot2 != null)
-                        ActBot(_bot2);
-                    return true;
-                }
-                if (s[0] == "neigh")
+                if (s[0] == "m")
                 {
                     new MessageDialog(Neigh(s[1]), $"{s[1]} Neighbors").ShowAsync();
                     return true;
