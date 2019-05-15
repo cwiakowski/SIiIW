@@ -100,7 +100,7 @@ namespace Morris
                 else
                 {
                     ComboBox2.Visibility = Visibility.Collapsed;
-                    player2 = PlayerType.RandomBot;
+                    player2 = PlayerType.Human;
                 }
             }
             catch (Exception ex)
