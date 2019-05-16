@@ -48,7 +48,7 @@ namespace Morris
         {
             var times = new List<int>() {0, 2, 5, 10, 15, 20};
             var depths = new List<int>() { 1, 2, 3, 5, 6, 7};
-            var bots = new List<PlayerType>() {PlayerType.SimpleMinMaxBot, PlayerType.VeryStrongMinMaxBot};
+            var bots = new List<PlayerType>() {PlayerType.SimpleMinMaxBot, PlayerType.VeryStrongMinMaxBot, PlayerType.SimpleAlfaBetaBot};
             _requests.Item1.Add(new BotRequest() { PlayerType = PlayerType.RandomBot, PlayersState = FieldState.P1});
             _requests.Item2.Add(new BotRequest() { PlayerType = PlayerType.RandomBot, PlayersState = FieldState.P2});
             foreach (var pt in bots)
@@ -162,7 +162,7 @@ namespace Morris
 
         private void ComboBox_OnDropDownClosed(object sender, object o)
         {
-            if (ComboBox.SelectedIndex <= _requests.Item1.Count)
+            if (0 <= ComboBox.SelectedIndex && ComboBox.SelectedIndex <= _requests.Item1.Count)
             {
                 player1 = _requests.Item1[ComboBox.SelectedIndex];
             }
@@ -175,7 +175,7 @@ namespace Morris
 
         private void ComboBox2_OnDropDownClosed(object sender, object o)
         {
-            if (ComboBox2.SelectedIndex <= _requests.Item2.Count)
+            if (0 <= ComboBox2.SelectedIndex && ComboBox2.SelectedIndex <= _requests.Item2.Count)
             {
                 player2 = _requests.Item2[ComboBox2.SelectedIndex];
             }

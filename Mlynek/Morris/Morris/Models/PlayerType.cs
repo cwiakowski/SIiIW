@@ -5,6 +5,7 @@
         Human,
         RandomBot,
         SimpleMinMaxBot,
-        VeryStrongMinMaxBot
+        VeryStrongMinMaxBot,
+        SimpleAlfaBetaBot
     }
 }

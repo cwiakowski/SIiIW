@@ -16,6 +16,8 @@ namespace Morris.Bots
                     return new SimpleMinMaxBot(request.PlayersState, request.PlayerType, ref movesTextBlock, request.MaxDepth, request.MaxTime);
                 case PlayerType.VeryStrongMinMaxBot:
                     return new VeryStrongMinMaxBot(request.PlayersState, request.PlayerType, ref movesTextBlock, request.MaxDepth, request.MaxTime);
+                case PlayerType.SimpleAlfaBetaBot:
+                    return new SimpleAlfaBetaBot(request.PlayersState, request.PlayerType, ref movesTextBlock, request.MaxDepth, request.MaxTime);
                 case PlayerType.Human:
                     break;
                 default:
