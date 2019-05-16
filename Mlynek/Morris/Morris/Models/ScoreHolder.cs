@@ -12,6 +12,11 @@ namespace Morris.Models
         public int PlacedStones { get; set; }
         public FieldState PlayersTurn { get; set; }
 
+        public ScoreHolder()
+        {
+            Score = double.MinValue;
+        }
+
         public void Dispose()
         {
             Board = null;
