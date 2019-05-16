@@ -6,6 +6,11 @@
         RandomBot,
         SimpleMinMaxBot,
         VeryStrongMinMaxBot,
-        SimpleAlfaBetaBot
+        HugeMinMaxBot,
+        AmazingMinMaxBot,
+        SimpleAlfaBetaBot,
+        VeryStrongAlfaBetaBot,
+        HugeAlfaBetaBot,
+        AmazingAlfaBetaBot
     }
 }
