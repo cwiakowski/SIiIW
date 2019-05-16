@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Morris.Models
 {
-    public class Board
+    public class Board : IDisposable
     {
         public List<Field> OuterFields { get; set; }
         public List<Field> MiddleFields { get; set; }
@@ -50,6 +51,15 @@ namespace Morris.Models
             }
 
             return s.ToString();
+        }
+
+        public void Dispose()
+        {
+            OuterFields = null;
+            MiddleFields = null;
+            InnerFields = null;
+            LastP1Moves = null;
+            LastP2Moves = null;
         }
     }
 }

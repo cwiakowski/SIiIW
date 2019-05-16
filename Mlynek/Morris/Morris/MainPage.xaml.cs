@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -16,6 +17,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Morris.Bots;
 using Morris.Controllers;
 using Morris.Models;
 
@@ -29,15 +31,45 @@ namespace Morris
     public sealed partial class MainPage : Page
     {
         private GameController controller;
-        private PlayerType player1 = PlayerType.Human;
-        private PlayerType player2 = PlayerType.Human;
+        private BotRequest player1 = new BotRequest(){ PlayerType = PlayerType.Human, PlayersState = FieldState.P1};
+        private BotRequest player2 = new BotRequest() { PlayerType = PlayerType.Human, PlayersState = FieldState.P2 };
+        private Tuple<ObservableCollection<BotRequest>, ObservableCollection<BotRequest>> _requests = new Tuple<ObservableCollection<BotRequest>, ObservableCollection<BotRequest>>(new ObservableCollection<BotRequest>(), new ObservableCollection<BotRequest>());
 
         public MainPage()
         {
             this.InitializeComponent();
+            GenerateRequests();
             ApplicationView.PreferredLaunchViewSize = new Size(800, 600);
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
             controller = new GameController(Display, Moves, StateTextBlock, ref Commands, ref BtnRandom);
+        }
+
+        private void GenerateRequests()
+        {
+            var times = new List<int>() {0, 2, 5, 10, 15, 20};
+            var depths = new List<int>() { 1, 2, 3, 5, 6, 7};
+            var bots = new List<PlayerType>() {PlayerType.SimpleMinMaxBot, PlayerType.VeryStrongMinMaxBot};
+            _requests.Item1.Add(new BotRequest() { PlayerType = PlayerType.RandomBot, PlayersState = FieldState.P1});
+            _requests.Item2.Add(new BotRequest() { PlayerType = PlayerType.RandomBot, PlayersState = FieldState.P2});
+            foreach (var pt in bots)
+            {
+                foreach (var d in depths)
+                {
+                    if (d >= 5)
+                    {
+                        foreach (var t in times)
+                        {
+                            _requests.Item1.Add(new BotRequest() { PlayerType = pt, PlayersState = FieldState.P1, MaxDepth = d, MaxTime = t });
+                            _requests.Item2.Add(new BotRequest() { PlayerType = pt, PlayersState = FieldState.P2, MaxDepth = d, MaxTime = t });
+                        }
+                    }
+                    else
+                    {
+                        _requests.Item1.Add(new BotRequest() { PlayerType = pt, PlayersState = FieldState.P1, MaxDepth = d, MaxTime = 0 });
+                        _requests.Item2.Add(new BotRequest() { PlayerType = pt, PlayersState = FieldState.P2, MaxDepth = d, MaxTime = 0 });
+                    }
+                }
+            }
         }
 
         private void BtnNew_OnClick(object sender, RoutedEventArgs e)
@@ -99,7 +131,7 @@ namespace Morris
                 else
                 {
                     ComboBox2.Visibility = Visibility.Collapsed;
-                    player2 = PlayerType.Human;
+                    player2.PlayerType = PlayerType.Human;
                 }
             }
             catch (Exception ex)
@@ -119,7 +151,7 @@ namespace Morris
                 else
                 {
                     ComboBox.Visibility = Visibility.Collapsed;
-                    player1 = PlayerType.Human;
+                    player1.PlayerType = PlayerType.Human;
                 }
             }
             catch (Exception ex)
@@ -130,25 +162,26 @@ namespace Morris
 
         private void ComboBox_OnDropDownClosed(object sender, object o)
         {
-            if (ComboBox.SelectedIndex == 0)
+            if (ComboBox.SelectedIndex <= _requests.Item1.Count)
             {
-                player1 = PlayerType.RandomBot;
+                player1 = _requests.Item1[ComboBox.SelectedIndex];
             }
-            else if (ComboBox.SelectedIndex == 1)
+            else
             {
-                player1 = PlayerType.SimpleMinMaxBot;
+                player1.PlayerType = PlayerType.Human;
             }
+            
         }
 
         private void ComboBox2_OnDropDownClosed(object sender, object o)
         {
-            if (ComboBox2.SelectedIndex == 0)
+            if (ComboBox2.SelectedIndex <= _requests.Item2.Count)
             {
-                player2 = PlayerType.RandomBot;
+                player2 = _requests.Item2[ComboBox2.SelectedIndex];
             }
-            else if (ComboBox2.SelectedIndex == 1)
+            else
             {
-                player2 = PlayerType.SimpleMinMaxBot;
+                player2.PlayerType = PlayerType.Human;
             }
         }
     }

@@ -145,14 +145,12 @@
                                     Click="P1AiToggleButton_OnClick"
                                     IsChecked="False"
                                     />
-                <ComboBox PlaceholderText="Pick a heuristic" Width="200" Visibility="Collapsed"
+                <ComboBox PlaceholderText="Pick a heuristic" Width="210" Visibility="Collapsed"
                           Name="ComboBox" HorizontalAlignment="Center"
                           VerticalAlignment="Center"
-                          Margin="10" DropDownClosed="ComboBox_OnDropDownClosed">
-                    <x:String>RandomBot</x:String>
-                    <x:String>SimpleMinMaxBot</x:String>
-                    <x:String>3</x:String>
-                    <x:String>4</x:String>
+                          Margin="10" DropDownClosed="ComboBox_OnDropDownClosed"
+                          ItemsSource="{x:Bind _requests.Item1}">
+                    
                 </ComboBox>
                 <AppBarToggleButton Icon="Emoji"
                                     Label="P2 AI"
@@ -160,14 +158,11 @@
                                     Click="P2AiToggleButton_OnClick"
                                     IsChecked="False"
                 />
-                <ComboBox PlaceholderText="Pick a heuristic" Width="200" Visibility="Collapsed"
+                <ComboBox PlaceholderText="Pick a heuristic" Width="210" Visibility="Collapsed"
                           Name="ComboBox2" HorizontalAlignment="Center"
                           VerticalAlignment="Center"
-                          Margin="10" DropDownClosed="ComboBox2_OnDropDownClosed">
-                    <x:String>RandomBot</x:String>
-                    <x:String>SimpleMinMaxBot</x:String>
-                    <x:String>3</x:String>
-                    <x:String>4</x:String>
+                          Margin="10" DropDownClosed="ComboBox2_OnDropDownClosed"
+                          ItemsSource="{x:Bind _requests.Item2}">
                 </ComboBox>
             </StackPanel>
         </AppBar>

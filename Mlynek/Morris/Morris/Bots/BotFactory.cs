@@ -6,21 +6,36 @@ namespace Morris.Bots
 {
     public class BotFactory
     {
-        public static IBot GenerateABot(FieldState playersState, PlayerType playerType, ref TextBlock movesTextBlock)
+        public static IBot GenerateABot(BotRequest request, ref TextBlock movesTextBlock)
         {
-            switch (playerType)
+            switch (request.PlayerType)
             {
                 case PlayerType.RandomBot:
-                    return new RandomBot(playersState, playerType, ref movesTextBlock);
+                    return new RandomBot(request.PlayersState, request.PlayerType, ref movesTextBlock);
                 case PlayerType.SimpleMinMaxBot:
-                    return new SimpleMinMaxBot(playersState, playerType, ref movesTextBlock);
+                    return new SimpleMinMaxBot(request.PlayersState, request.PlayerType, ref movesTextBlock, request.MaxDepth, request.MaxTime);
+                case PlayerType.VeryStrongMinMaxBot:
+                    return new VeryStrongMinMaxBot(request.PlayersState, request.PlayerType, ref movesTextBlock, request.MaxDepth, request.MaxTime);
                 case PlayerType.Human:
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(playerType), playerType, null);
+                    throw new ArgumentOutOfRangeException(nameof(request.PlayerType), request.PlayerType, null);
             }
 
             return null;
+        }
+    }
+
+    public class BotRequest
+    {
+        public FieldState PlayersState { get; set; }
+        public PlayerType PlayerType { get; set; }
+        public int MaxDepth { get; set; }
+        public int MaxTime { get; set; }
+
+        public override string ToString()
+        {
+            return $"{PlayerType, -12} /t{MaxTime} /d{MaxDepth}";
         }
     }
 }

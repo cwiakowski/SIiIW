@@ -252,7 +252,7 @@ namespace Morris.Controllers
             return s.ToString();
         }
 
-        public void NewGame(PlayerType player1, PlayerType player2)
+        public void NewGame(BotRequest player1, BotRequest player2)
         {
             //new MessageDialog(player1.ToString(), player2.ToString()).ShowAsync();
             GenerateBots(player1, player2);
@@ -293,10 +293,10 @@ namespace Morris.Controllers
             _movesTextBlock.Text = $"Moves: {_moves}";
         }
 
-        public void GenerateBots(PlayerType p1, PlayerType p2)
+        public void GenerateBots(BotRequest p1, BotRequest p2)
         {
-            _bot1 = BotFactory.GenerateABot(FieldState.P1, p1, ref _movesTextBlock);
-            _bot2 = BotFactory.GenerateABot(FieldState.P2, p2, ref _movesTextBlock);
+            _bot1 = BotFactory.GenerateABot(p1, ref _movesTextBlock);
+            _bot2 = BotFactory.GenerateABot(p2, ref _movesTextBlock);
         }
 
         private void NextPlayersTurn()

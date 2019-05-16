@@ -4,6 +4,7 @@
     {
         Human,
         RandomBot,
-        SimpleMinMaxBot
+        SimpleMinMaxBot,
+        VeryStrongMinMaxBot
     }
 }

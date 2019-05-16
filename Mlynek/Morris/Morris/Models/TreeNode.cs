@@ -5,9 +5,8 @@ using System.Linq;
 
 namespace Morris.Models
 {
-    public class TreeNode<T> : IEnumerable<TreeNode<T>>
+    public class TreeNode<T> : IEnumerable<TreeNode<T>> where T : IDisposable
     {
-        public int Depth { get; set; }
         public T Data { get; set; }
         public TreeNode<T> Parent { get; set; }
         public ICollection<TreeNode<T>> Children { get; set; }
@@ -40,6 +39,19 @@ namespace Morris.Models
         public override string ToString()
         {
             return Data != null ? Data.ToString() : "[data null]";
+        }
+
+        public void Dispose()
+        {
+            foreach (var c in Children)
+            {
+                c.Dispose();
+            }
+
+            Data.Dispose();
+            Children = null;
+            ElementsIndex = null;
+            Parent = null;
         }
 
 

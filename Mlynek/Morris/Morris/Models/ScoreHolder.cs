@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Morris.Models
 {
-    public class ScoreHolder
+    public class ScoreHolder : IDisposable
     {
         public Board Board { get; set; }
         public double Score { get; set; }
@@ -10,5 +11,12 @@ namespace Morris.Models
         public List<Mill> Mills { get; set; }
         public int PlacedStones { get; set; }
         public FieldState PlayersTurn { get; set; }
+
+        public void Dispose()
+        {
+            Board = null;
+            Decision = null;
+            Mills = null;
+        }
     }
 }

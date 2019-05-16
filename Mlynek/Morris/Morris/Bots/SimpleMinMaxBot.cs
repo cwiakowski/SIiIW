@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Xml.Serialization;
 using Windows.Storage.Pickers.Provider;
 using Windows.UI.Xaml.Controls;
@@ -9,20 +11,21 @@ using Morris.Services;
 
 namespace Morris.Bots
 {
-    /*
-     * cykl zycia spermiarza
-     *      wybor ruchu/dodania piona
-     *      sprawdzeniee mlynkow
-     *      mozliwe usuwanie wtedy
-     *      
-     */
     public class SimpleMinMaxBot : AbstractBot
     {
         private TreeNode<ScoreHolder> _decisionTree;
-        private int _maxDepth;
+        protected int MaxDepth;
+        protected int Time;
+        protected Stopwatch Stopwatch;
         public SimpleMinMaxBot(FieldState playersState, PlayerType playerType, ref TextBlock movesTextBlock) : base(playersState, playerType, ref movesTextBlock)
         {
-            _maxDepth = 3;
+            MaxDepth = 3;
+        }
+
+        public SimpleMinMaxBot(FieldState playersState, PlayerType playerType, ref TextBlock movesTextBlock, int maxDepth, int time = 0) : base(playersState, playerType, ref movesTextBlock)
+        {
+            MaxDepth = maxDepth;
+            Time = time;
         }
 
         public override double CalculateBoardState(Board board, bool asEnemy = false)
@@ -34,10 +37,13 @@ namespace Morris.Bots
         public double UpdateDecisionTree(TreeNode<ScoreHolder> node, Board board, int placedStones, bool maximizing = true)
         {
             //If node i s a leaf return calculated value (some kind of heury)
-            if (node.Level >= _maxDepth)
+            if (node.Level >= MaxDepth)
             {
                 var data = node.Data;
-                data.Score = CalculateBoardState(board);
+                using (board)
+                {
+                    data.Score = CalculateBoardState(board, !maximizing);
+                }
                 return data.Score;
             }
 
@@ -54,6 +60,7 @@ namespace Morris.Bots
                 {
                     playersFields = board.GetFields().Where(x => x.State == _enemyState).ToList();
                 }
+
 
                 foreach (var f in playersFields)
                 {
@@ -137,17 +144,26 @@ namespace Morris.Bots
             //Select value, depending if we are maximizing or minimizing score
             if (maximizing)
             {
-                return node.Children.Select(x => x.Data.Score).OrderByDescending(x => x).FirstOrDefault();
+                var sum = node.Children.Select(x => x.Data.Score).OrderByDescending(x => x).FirstOrDefault();
+                return sum;
             }
             else
             {
+                node.Children.Select(x => x.Data.Score).OrderBy(x => x).FirstOrDefault();
                 return node.Children.Select(x => x.Data.Score).OrderBy(x => x).FirstOrDefault();
             }
+        }
+
+        private void DisposeTree()
+        {
+            _decisionTree?.Dispose();
         }
 
 
         public override ScoreHolder GetBestBoard(Board board, int placedStones)
         {
+            DisposeTree();
+            Stopwatch.StartNew();
             _decisionTree = new TreeNode<ScoreHolder>(new ScoreHolder());
             UpdateDecisionTree(_decisionTree, board, placedStones);
             var data = _decisionTree.Children.OrderByDescending(x => x.Data.Score).FirstOrDefault()?.Data;

@@ -1,4 +1,6 @@
-﻿namespace Morris.Models
+﻿using System;
+
+namespace Morris.Models
 {
     public class Field
     {

@@ -195,6 +195,43 @@ namespace Morris.Services
             return list;
         }
 
+        public static int GetDoubles(this Board board, FieldState state)
+        {
+            int sum = 0;
+
+            for (int i = 0; i < 8; i = i + 2)
+            {
+                if (IsADouble(board, board.OuterFields[i], board.OuterFields[i + 1], board.OuterFields[(i + 2) % 8], state))
+                    sum++;
+            }
+
+            for (int i = 0; i< 8; i = i + 2)
+            {
+                if (IsADouble(board, board.MiddleFields[i], board.MiddleFields[i + 1], board.MiddleFields[(i + 2) % 8], state))
+                    sum++;
+            }
+
+            for (int i = 0; i< 8; i = i + 2)
+            {
+                if (IsADouble(board, board.InnerFields[i], board.InnerFields[i + 1], board.InnerFields[(i + 2) % 8], state))
+                    sum++;
+            }
+
+            for (int i = 1; i< 8; i = i + 2)
+            {
+                if (IsADouble(board, board.OuterFields[i], board.MiddleFields[i], board.InnerFields[i], state))
+                    sum++;
+            }
+
+            return sum;
+        }
+
+        private static bool IsADouble(this Board board, Field field1, Field field2, Field field3, FieldState state)
+        {
+            var fields = new List<Field>() { field1, field2, field3 };
+            return fields.Count(x => x.State == state) == 2;
+        }
+
         public static int CountPlayerFields(this Board board, FieldState state)
         {
             return board.OuterFields.Concat(board.MiddleFields).Concat(board.InnerFields)
