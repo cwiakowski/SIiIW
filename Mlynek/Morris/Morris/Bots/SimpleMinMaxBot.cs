@@ -28,8 +28,12 @@ namespace Morris.Bots
             Time = time == 0? int.MaxValue : time;
         }
 
-        public override double CalculateBoardState(Board board, bool asEnemy = false)
+        public override double CalculateBoardState(Board board, int placedStones)
         {
+            if (board.IsGameOver(placedStones, _enemyState))
+            {
+                return double.MaxValue;
+            }
             return board.GetFields().Count(x => x.State.Equals(PlayersState))*3 - board.GetFields()
                 .Count(x => x.State.Equals(_enemyState))*2;
         }
@@ -42,7 +46,7 @@ namespace Morris.Bots
                 var data = node.Data;
                 using (board)
                 {
-                    data.Score = CalculateBoardState(board, !maximizing);
+                    data.Score = CalculateBoardState(board, data.PlacedStones);
                 }
                 return data.Score;
             }
@@ -184,6 +188,11 @@ namespace Morris.Bots
             Stopwatch = Stopwatch.StartNew();
             UpdateDecisionTree(_decisionTree, board, placedStones);
             var data = _decisionTree.Children.OrderByDescending(x => x.Data.Score).FirstOrDefault()?.Data;
+            if (data == null)
+            {
+                DisposeTree();
+                return null;
+            }
             var data2 = new ScoreHolder() {Board = data.Board.Copy(), Score = data.Score, Decision = data.Decision};
             DisposeTree();
             return data2;

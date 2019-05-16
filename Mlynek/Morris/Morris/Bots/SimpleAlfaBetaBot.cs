@@ -31,6 +31,11 @@ namespace Morris.Bots
             Stopwatch = Stopwatch.StartNew();
             UpdateDecisionTree(_decisionTree, board, int.MinValue, int.MaxValue, placedStones);
             var data = _decisionTree.Children.OrderByDescending(x => x.Data.Score).FirstOrDefault()?.Data;
+            if (data == null)
+            {
+                DisposeTree();
+                return null;
+            }
             var data2 = new ScoreHolder() { Board = data.Board.Copy(), Score = data.Score, Decision = data.Decision };
             DisposeTree();
             return data2;
@@ -42,10 +47,7 @@ namespace Morris.Bots
             if (node.Level >= MaxDepth)
             {
                 var data = node.Data;
-                using (board)
-                {
-                    data.Score = CalculateBoardState(board, !maximizing);
-                }
+                data.Score = CalculateBoardState(board, placedStones);
                 return data.Score;
             }
 
@@ -141,7 +143,7 @@ namespace Morris.Bots
                 }
             }
 
-            double score = maximizing? double.MinValue : double.MaxValue;
+            double score = maximizing? alpha : beta;
             //Calculate Score for all possible moves
             foreach (var child in node.Children)
             {
@@ -157,6 +159,7 @@ namespace Morris.Bots
                     score = score > child.Data.Score ? child.Data.Score : score;
                     beta = beta > child.Data.Score ? child.Data.Score : beta;
                 }
+
                 if (beta <= alpha)
                     break;
             }
@@ -176,8 +179,12 @@ namespace Morris.Bots
             return score;
         }
 
-        public override double CalculateBoardState(Board board, bool asEnemy = false)
+        public override double CalculateBoardState(Board board, int placedStones)
         {
+            if (board.IsGameOver(placedStones, _enemyState))
+            {
+                return double.MaxValue;
+            }
             return board.GetFields().Count(x => x.State.Equals(PlayersState)) * 3 - board.GetFields()
                        .Count(x => x.State.Equals(_enemyState)) * 2;
         }
@@ -186,7 +193,7 @@ namespace Morris.Bots
         {
             _decisionTree?.Dispose();
             _decisionTree = null;
-            GC.Collect();
+            //GC.Collect();
         }
 
         public override void Dispose()

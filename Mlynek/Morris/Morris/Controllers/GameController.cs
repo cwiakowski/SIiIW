@@ -201,6 +201,13 @@ namespace Morris.Controllers
             if (State == GameState.Off)
                 return;
             var data = bot.GetBestBoard(BoardController.Board, _stones);
+            if (data == null)
+            {
+                _headerTextBlock.Text = "Mlynek v3.2.5";
+                State = GameState.Off;
+                new MessageDialog($"{_playersTurn} IS A LOSER", "GAME OVER").ShowAsync();
+                return;
+            }
             BoardController.Board = data.Board;
             _commandsTextBlock.Text = $"{_commandsTextBlock.Text}{_playersTurn}: {data.Decision}\n";
             PrintMills();

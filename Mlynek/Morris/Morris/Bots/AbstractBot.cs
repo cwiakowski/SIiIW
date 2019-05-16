@@ -22,13 +22,9 @@ namespace Morris.Bots
             _enemyState = playersState == FieldState.P1 ? FieldState.P2 : FieldState.P1;
         }
 
-        public virtual double CalculateBoardState(Board board, bool asEnemy = false)
+        public virtual double CalculateBoardState(Board board, int placedStones)
         {
-            if (!asEnemy)
-                return board.GetFields().Count(x => x.State.Equals(PlayersState));
-            return board.GetFields().Count(x => x.State.Equals(_enemyState));
-
-
+            return board.GetFields().Count(x => x.State.Equals(PlayersState));
         }
         public abstract ScoreHolder GetBestBoard(Board board, int placedStones);
         public abstract void Dispose();

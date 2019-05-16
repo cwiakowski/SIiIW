@@ -17,8 +17,13 @@ namespace Morris.Bots
             
         }
 
-        public override double CalculateBoardState(Board board, bool asEnemy = false)
+        public override double CalculateBoardState(Board board, int placedStones)
         {
+            if (board.IsGameOver(placedStones, _enemyState))
+            {
+                return double.MaxValue;
+            }
+
             double score = board.GetMills().Count(mill => mill.Field1.State.Equals(PlayersState)) * 3 -
                      board.GetMills().Count(mill => mill.Field1.State.Equals(_enemyState)) * 3;
             score += board.GetDoubles(PlayersState) * 2 -

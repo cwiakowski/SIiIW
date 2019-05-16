@@ -263,5 +263,30 @@ namespace Morris.Services
             };
             return b;
         }
+
+        public static bool IsGameOver(this Board board, int placedStones, FieldState pState)
+        {
+            if (placedStones < 18)
+            {
+                return false;
+            }
+
+            var fields = board.GetFields().Where(x => x.State.Equals(pState));
+            if (board.GetFields().Count() == 2)
+            {
+                return true;
+            }
+
+            bool isOver = true;
+            foreach (var field in fields)
+            {
+                if (GetAvailableMoves(board, field.Cords).Any())
+                {
+                    isOver = false;
+                }
+            }
+
+            return isOver;
+        }
     }
 }
