@@ -1,8 +1,9 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace Morris.Models
 {
-    public class Mill
+    public class Mill : IDisposable
     {
         public Field Field1 { get; set; }
         public Field Field2 { get; set; }
@@ -34,6 +35,13 @@ namespace Morris.Models
             s.Append($"({Field2.Cords}), ");
             s.Append($"({Field3.Cords})]");
             return s.ToString();
+        }
+
+        public void Dispose()
+        {
+            Field1 = null;
+            Field2 = null;
+            Field3 = null;
         }
     }
 }

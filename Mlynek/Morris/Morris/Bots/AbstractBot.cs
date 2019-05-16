@@ -7,7 +7,7 @@ using Morris.Services;
 
 namespace Morris.Bots
 {
-    public abstract class AbstractBot : IBot
+    public abstract class AbstractBot : IBot, IDisposable
     {
         public PlayerType PlayerType { get; private set; }
         public FieldState PlayersState { get; private set; }
@@ -31,5 +31,6 @@ namespace Morris.Bots
 
         }
         public abstract ScoreHolder GetBestBoard(Board board, int placedStones);
+        public abstract void Dispose();
     }
 }

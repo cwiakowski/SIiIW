@@ -60,6 +60,7 @@ namespace Morris.Models
             InnerFields = null;
             LastP1Moves = null;
             LastP2Moves = null;
+            GC.SuppressFinalize(this);
         }
     }
 }

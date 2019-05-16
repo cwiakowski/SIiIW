@@ -94,5 +94,10 @@ namespace Morris.Bots
                 return sh;
             }
         }
+
+        public override void Dispose()
+        {
+            _random = null;
+        }
     }
 }

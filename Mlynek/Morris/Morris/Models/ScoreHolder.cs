@@ -17,6 +17,7 @@ namespace Morris.Models
             Board = null;
             Decision = null;
             Mills = null;
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -43,15 +43,18 @@ namespace Morris.Models
 
         public void Dispose()
         {
-            foreach (var c in Children)
+            if (Children != null)
             {
-                c.Dispose();
+                foreach (var c in Children)
+                {
+                    c.Dispose();
+                }
             }
-
             Data.Dispose();
             Children = null;
             ElementsIndex = null;
             Parent = null;
+            GC.SuppressFinalize(this);
         }
 
 

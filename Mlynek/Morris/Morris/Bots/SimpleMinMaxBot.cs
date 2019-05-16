@@ -142,32 +142,54 @@ namespace Morris.Bots
                 child.Data.Score = UpdateDecisionTree(child, child.Data.Board, placedStones, !maximizing);
             }
             //Select value, depending if we are maximizing or minimizing score
+            double score;
             if (maximizing)
             {
-                var sum = node.Children.Select(x => x.Data.Score).OrderByDescending(x => x).FirstOrDefault();
-                return sum;
+                score = node.Children.Select(x => x.Data.Score).OrderByDescending(x => x).FirstOrDefault();
             }
             else
             {
-                node.Children.Select(x => x.Data.Score).OrderBy(x => x).FirstOrDefault();
-                return node.Children.Select(x => x.Data.Score).OrderBy(x => x).FirstOrDefault();
+                score = node.Children.Select(x => x.Data.Score).OrderBy(x => x).FirstOrDefault();
             }
+            if (!node.IsRoot)
+            {
+                if (!node.Parent.IsRoot)
+                {
+                    foreach (var child in node.Children)
+                    {
+                        child.Dispose();
+                        //GC.Collect();
+                    }
+                }
+            }
+
+            return score;
         }
 
         private void DisposeTree()
         {
             _decisionTree?.Dispose();
+            _decisionTree = null;
+            GC.Collect();
         }
 
 
         public override ScoreHolder GetBestBoard(Board board, int placedStones)
         {
-            DisposeTree();
             Stopwatch.StartNew();
             _decisionTree = new TreeNode<ScoreHolder>(new ScoreHolder());
             UpdateDecisionTree(_decisionTree, board, placedStones);
             var data = _decisionTree.Children.OrderByDescending(x => x.Data.Score).FirstOrDefault()?.Data;
-            return data;
+            var data2 = new ScoreHolder() {Board = data.Board.Copy(), Score = data.Score, Decision = data.Decision};
+            DisposeTree();
+            return data2;
+        }
+
+        public override void Dispose()
+        {
+            _decisionTree?.Dispose();
+            _decisionTree = null;
+            Stopwatch = null;
         }
     }
 }
