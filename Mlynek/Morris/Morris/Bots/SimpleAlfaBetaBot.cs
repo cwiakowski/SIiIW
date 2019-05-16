@@ -30,9 +30,12 @@ namespace Morris.Bots
             _decisionTree = new TreeNode<ScoreHolder>(new ScoreHolder());
             Stopwatch = Stopwatch.StartNew();
             UpdateDecisionTree(_decisionTree, board, int.MinValue, int.MaxValue, placedStones);
+            CalculationTime += Stopwatch.Elapsed.TotalSeconds;
             var data = _decisionTree.Children.OrderByDescending(x => x.Data.Score).FirstOrDefault()?.Data;
+            CalculatedMoves += _decisionTree.Count();
             if (data == null)
             {
+                CalculatedMoves++;
                 DisposeTree();
                 return null;
             }
@@ -164,17 +167,17 @@ namespace Morris.Bots
                     break;
             }
             //Select value, depending if we are maximizing or minimizing score
-            if (!node.IsRoot)
-            {
-                if (!node.Parent.IsRoot)
-                {
-                    foreach (var child in node.Children)
-                    {
-                        child.Dispose();
-                        //GC.Collect();
-                    }
-                }
-            }
+//            if (!node.IsRoot)
+//            {
+//                if (!node.Parent.IsRoot)
+//                {
+//                    foreach (var child in node.Children)
+//                    {
+//                        child.Dispose();
+//                        //GC.Collect();
+//                    }
+//                }
+//            }
 
             return score;
         }

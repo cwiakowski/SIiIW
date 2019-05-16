@@ -136,7 +136,7 @@ namespace Morris.Controllers
                         {
                             _headerTextBlock.Text = "Mlynek v3.2.5";
                             State = GameState.Off;
-                            new MessageDialog($"{_playersTurn} IS A LOSER", "GAME OVER").ShowAsync();
+                            DisplayEndGameMessage();
                         }
                         return true;
                     }
@@ -205,7 +205,7 @@ namespace Morris.Controllers
             {
                 _headerTextBlock.Text = "Mlynek v3.2.5";
                 State = GameState.Off;
-                new MessageDialog($"{_playersTurn} IS A LOSER", "GAME OVER").ShowAsync();
+                DisplayEndGameMessage();
                 return;
             }
             BoardController.Board = data.Board;
@@ -226,13 +226,32 @@ namespace Morris.Controllers
             {
                 _headerTextBlock.Text = "Mlynek v3.2.5";
                 State = GameState.Off;
-                new MessageDialog($"{_playersTurn} IS A LOSER", "GAME OVER").ShowAsync();
+                DisplayEndGameMessage();
             }
             UpdateBoard();
             if (_stepByStepButton.IsChecked.Value)
             {
                 ActBot();
             }
+        }
+
+        private void DisplayEndGameMessage()
+        {
+            var sb = new StringBuilder();
+            sb.Append($"{_playersTurn} IS A LOSER\n");
+            sb.Append($"TOTAL MOVES: {_moves}\n");
+            if (_bot1 != null)
+            {
+                sb.Append($"P1 CALCULATED MOVES: {_bot1.GetCalculatedMoves()}\n");
+                sb.Append($"P1 CALCULATION TIME: {_bot1.GetCalculationTime()}\n");
+            }
+            if (_bot2 != null)
+            {
+                sb.Append($"P1 CALCULATED MOVES: {_bot2.GetCalculatedMoves()}\n");
+                sb.Append($"P1 CALCULATION TIME: {_bot2.GetCalculationTime()}\n");
+            }
+
+            new MessageDialog(sb.ToString(), "GAME OVER").ShowAsync();
         }
 
         private bool IsGameOver()

@@ -6,5 +6,7 @@ namespace Morris.Bots
     public interface IBot
     {
         ScoreHolder GetBestBoard(Board board, int placedStones);
+        int GetCalculatedMoves();
+        double GetCalculationTime();
     }
 }

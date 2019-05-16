@@ -27,6 +27,7 @@ namespace Morris.Bots
             {
                 rand = _random.Next(_max) % fields.Count();
                 availableMoves = board.GetAvailableMoves(fields[rand%fields.Count].Cords).ToList();
+                CalculatedMoves++;
             }
             return new Tuple<string, string>(fields[rand % fields.Count].Cords, availableMoves[rand % availableMoves.Count].Cords);
         }
@@ -35,6 +36,7 @@ namespace Morris.Bots
         {
             var fields = board.GetFields().Where(x => x.State == FieldState.Empty).ToList();
             var rand = _random.Next(_max) % fields.Count();
+            CalculatedMoves++;
             return fields[rand].Cords;
         }
 
@@ -43,6 +45,7 @@ namespace Morris.Bots
             FieldState enemyState = PlayersState == FieldState.P1 ? FieldState.P2 : FieldState.P1;
             var fields = board.GetFields().Where(x => x.State == enemyState).ToList();
             var rand = _random.Next(_max) % fields.Count();
+            CalculatedMoves++;
             return fields[rand].Cords;
         }
 

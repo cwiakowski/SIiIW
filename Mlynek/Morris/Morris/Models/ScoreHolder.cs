@@ -10,7 +10,7 @@ namespace Morris.Models
         public string Decision { get; set; }
         public List<Mill> Mills { get; set; }
         public int PlacedStones { get; set; }
-        public FieldState PlayersTurn { get; set; }
+        public int Moves { get; set; }
 
         public ScoreHolder()
         {

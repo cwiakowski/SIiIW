@@ -30,6 +30,7 @@ namespace Morris.Bots
 
         public override double CalculateBoardState(Board board, int placedStones)
         {
+
             if (board.IsGameOver(placedStones, _enemyState))
             {
                 return double.MaxValue;
@@ -159,17 +160,17 @@ namespace Morris.Bots
             {
                 score = node.Children.Select(x => x.Data.Score).OrderBy(x => x).FirstOrDefault();
             }
-            if (!node.IsRoot)
-            {
-                if (!node.Parent.IsRoot)
-                {
-                    foreach (var child in node.Children)
-                    {
-                        child.Dispose();
-                        //GC.Collect();
-                    }
-                }
-            }
+//            if (!node.IsRoot)
+//            {
+//                if (!node.Parent.IsRoot)
+//                {
+//                    foreach (var child in node.Children)
+//                    {
+//                        child.Dispose();
+//                        //GC.Collect();
+//                    }
+//                }
+//            }
 
             return score;
         }
@@ -187,9 +188,12 @@ namespace Morris.Bots
             _decisionTree = new TreeNode<ScoreHolder>(new ScoreHolder());
             Stopwatch = Stopwatch.StartNew();
             UpdateDecisionTree(_decisionTree, board, placedStones);
+            CalculationTime += Stopwatch.Elapsed.TotalSeconds;
             var data = _decisionTree.Children.OrderByDescending(x => x.Data.Score).FirstOrDefault()?.Data;
+            CalculatedMoves += _decisionTree.Count();
             if (data == null)
             {
+                CalculatedMoves++;
                 DisposeTree();
                 return null;
             }
