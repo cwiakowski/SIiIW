@@ -2,55 +2,53 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Windows.UI.Core;
+using System.Threading;
+using System.Xml.Serialization;
+using Windows.Storage.Pickers.Provider;
 using Windows.UI.Xaml.Controls;
 using Morris.Models;
 using Morris.Services;
 
 namespace Morris.Bots
 {
-    public class SimpleAlfaBetaBot : AbstractBot
+    public class MinMaxBot : AbstractBot
     {
         private TreeNode<ScoreHolder> _decisionTree;
         protected int MaxDepth;
         protected int Time;
         protected Stopwatch Stopwatch;
-        public SimpleAlfaBetaBot(FieldState playersState, PlayerType playerType, ref TextBlock movesTextBlock) : base(playersState, playerType, ref movesTextBlock)
+        public MinMaxBot(FieldState playersState, PlayerType playerType, ref TextBlock movesTextBlock) : base(playersState, playerType, ref movesTextBlock)
         {
+            MaxDepth = 3;
         }
 
-        public SimpleAlfaBetaBot(FieldState playersState, PlayerType playerType, ref TextBlock movesTextBlock, int maxDepth, int time) : base(playersState, playerType, ref movesTextBlock)
+        public MinMaxBot(FieldState playersState, PlayerType playerType, ref TextBlock movesTextBlock, int maxDepth, int time) : base(playersState, playerType, ref movesTextBlock)
         {
             MaxDepth = maxDepth;
-            Time = time == 0 ? int.MaxValue : time;
+            Time = time == 0? int.MaxValue : time;
         }
 
-        public override ScoreHolder GetBestBoard(Board board, int placedStones)
+        public override double CalculateBoardState(Board board, int placedStones, int level)
         {
-            _decisionTree = new TreeNode<ScoreHolder>(new ScoreHolder());
-            Stopwatch = Stopwatch.StartNew();
-            UpdateDecisionTree(_decisionTree, board, int.MinValue, int.MaxValue, placedStones);
-            CalculationTime += Stopwatch.Elapsed.TotalSeconds;
-            var data = _decisionTree.Children.OrderByDescending(x => x.Data.Score).FirstOrDefault()?.Data;
-            CalculatedMoves += _decisionTree.Count();
-            if (data == null)
+
+            if (board.IsGameOver(placedStones, _enemyState))
             {
-                CalculatedMoves++;
-                DisposeTree();
-                return null;
+                return double.MaxValue;
             }
-            var data2 = new ScoreHolder() { Board = data.Board.Copy(), Score = data.Score, Decision = data.Decision };
-            DisposeTree();
-            return data2;
+            return board.GetFields().Count(x => x.State.Equals(PlayersState))*3 - board.GetFields()
+                .Count(x => x.State.Equals(_enemyState))*2;
         }
 
-        public double UpdateDecisionTree(TreeNode<ScoreHolder> node, Board board, double alpha, double beta, int placedStones, bool maximizing = true)
-        {
+        public double UpdateDecisionTree(TreeNode<ScoreHolder> node, Board board, int placedStones, bool maximizing = true)
+        { 
             //If node i s a leaf return calculated value (some kind of heury)
             if (node.Level >= MaxDepth)
             {
                 var data = node.Data;
-                data.Score = CalculateBoardState(board, placedStones);
+                using (board)
+                {
+                    data.Score = CalculateBoardState(board, data.PlacedStones, node.Level);
+                }
                 return data.Score;
             }
 
@@ -145,28 +143,23 @@ namespace Morris.Bots
                     }
                 }
             }
-
-            double score = maximizing? alpha : beta;
+            
             //Calculate Score for all possible moves
             foreach (var child in node.Children)
             {
                 child.Data.Mills = child.Data.Board.GetMills().ToList();
-                child.Data.Score = UpdateDecisionTree(child, child.Data.Board, alpha, beta, placedStones, !maximizing);
-                if (maximizing)
-                {
-                    score = score < child.Data.Score ? child.Data.Score : score;
-                    alpha = alpha < child.Data.Score ? child.Data.Score : alpha;
-                }
-                else
-                {
-                    score = score > child.Data.Score ? child.Data.Score : score;
-                    beta = beta > child.Data.Score ? child.Data.Score : beta;
-                }
-
-                if (beta <= alpha)
-                    break;
+                child.Data.Score = UpdateDecisionTree(child, child.Data.Board, placedStones, !maximizing);
             }
             //Select value, depending if we are maximizing or minimizing score
+            double score;
+            if (maximizing)
+            {
+                score = node.Children.Select(x => x.Data.Score).OrderByDescending(x => x).FirstOrDefault();
+            }
+            else
+            {
+                score = node.Children.Select(x => x.Data.Score).OrderBy(x => x).FirstOrDefault();
+            }
 //            if (!node.IsRoot)
 //            {
 //                if (!node.Parent.IsRoot)
@@ -182,21 +175,31 @@ namespace Morris.Bots
             return score;
         }
 
-        public override double CalculateBoardState(Board board, int placedStones)
-        {
-            if (board.IsGameOver(placedStones, _enemyState))
-            {
-                return double.MaxValue;
-            }
-            return board.GetFields().Count(x => x.State.Equals(PlayersState)) * 3 - board.GetFields()
-                       .Count(x => x.State.Equals(_enemyState)) * 2;
-        }
-
         private void DisposeTree()
         {
             _decisionTree?.Dispose();
             _decisionTree = null;
-            //GC.Collect();
+            GC.Collect();
+        }
+
+
+        public override ScoreHolder GetBestBoard(Board board, int placedStones)
+        {
+            _decisionTree = new TreeNode<ScoreHolder>(new ScoreHolder());
+            Stopwatch = Stopwatch.StartNew();
+            UpdateDecisionTree(_decisionTree, board, placedStones);
+            CalculationTime += Stopwatch.Elapsed.TotalSeconds;
+            var data = _decisionTree.Children.OrderByDescending(x => x.Data.Score).FirstOrDefault()?.Data;
+            CalculatedMoves += _decisionTree.Count();
+            if (data == null)
+            {
+                CalculatedMoves++;
+                DisposeTree();
+                return null;
+            }
+            var data2 = new ScoreHolder() {Board = data.Board.Copy(), Score = data.Score, Decision = data.Decision};
+            DisposeTree();
+            return data2;
         }
 
         public override void Dispose()

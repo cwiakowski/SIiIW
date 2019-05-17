@@ -26,7 +26,7 @@ namespace Morris.Bots
             _enemyState = playersState == FieldState.P1 ? FieldState.P2 : FieldState.P1;
         }
 
-        public virtual double CalculateBoardState(Board board, int placedStones)
+        public virtual double CalculateBoardState(Board board, int placedStones, int level = 0)
         {
             return board.GetFields().Count(x => x.State.Equals(PlayersState));
         }

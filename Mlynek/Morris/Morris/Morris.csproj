@@ -120,17 +120,11 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Bots\AbstractBot.cs" />
-    <Compile Include="Bots\AmazingAlfaBetaBot.cs" />
-    <Compile Include="Bots\AmazingMinMaxBot.cs" />
     <Compile Include="Bots\BotFactory.cs" />
-    <Compile Include="Bots\HugeAlfaBetaBot.cs" />
-    <Compile Include="Bots\HugeMinMaxBot.cs" />
     <Compile Include="Bots\IBot.cs" />
     <Compile Include="Bots\RandomBot.cs" />
-    <Compile Include="Bots\SimpleAlfaBetaBot.cs" />
-    <Compile Include="Bots\SimpleMinMaxBot.cs" />
-    <Compile Include="Bots\VeryStrongAlfaBeta.cs" />
-    <Compile Include="Bots\VeryStrongMinMaxBot.cs" />
+    <Compile Include="Bots\AlfaBetaBot.cs" />
+    <Compile Include="Bots\MinMaxBot.cs" />
     <Compile Include="Controllers\BoardController.cs" />
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="MainPage.xaml.cs">
@@ -146,6 +140,7 @@
     <Compile Include="Models\TreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\BoardService.cs" />
+    <Compile Include="Services\BotService.cs" />
     <Compile Include="Services\FieldService.cs" />
   </ItemGroup>
   <ItemGroup>
