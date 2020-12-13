@@ -42,6 +42,7 @@ namespace TravellingThiefProblem.Services
                 {
                     var line = lines[i].Split("\t");
                     problem.Items.Add(new Item(int.Parse(line[0]), int.Parse(line[1]), int.Parse(line[2]), int.Parse(line[3])));
+                    //problem.Items.Add(new Item(int.Parse(line[0]), int.Parse(line[1]), 0, int.Parse(line[3])));
                 }
             }
 

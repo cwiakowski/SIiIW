@@ -17,7 +17,7 @@ namespace TravellingThiefProblem
         private double _px = 70;                //0-100
         private double _pm = 5;                 //0-100
         private int _tour = 5;
-        private int _greedyAlgorhitmType = 1;   //0 - Min(Weight); 1 - Max(Profit/Weight); 2 - Max(Profit)
+        private int _greedyAlgorhitmType = 2;   //0 - Min(Weight); 1 - Max(Profit/Weight); 2 - Max(Profit)
         private int _selectionType = 0;         //0 - Tour, 1- Ruletka
         private int _fileIndex = 5;             //0-4 easy, 5-9 hard, 10-14 medium, 15-16 trival
         private IFitnessCalculator _fitc;
@@ -44,6 +44,17 @@ namespace TravellingThiefProblem
             Initialize();
             Sw.Start();
             BeginEvaluation();
+            Sw.Stop();
+        }
+
+        public void StartAnt()
+        {
+            Sw = new Stopwatch();
+            _fitc = new FitnessCalculator();
+            InitializeProblem();
+            Sw.Start();
+            Antek antoni = new Antek(Problem, _fitc);
+            antoni.Run();
             Sw.Stop();
         }
 
@@ -99,7 +110,7 @@ namespace TravellingThiefProblem
                 var best = Thieves[participants.ElementAt(0)];
                 for (int j = 0; j < participants.Count; j++)
                 {
-                    if (best.Fitness < Thieves[participants.ElementAt(j)].Fitness)
+                    if (best.Fitness > Thieves[participants.ElementAt(j)].Fitness)
                     {
                         best = Thieves[participants.ElementAt(j)];
                     }

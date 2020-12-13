@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.168
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravellingThiefProblem", "TravellingThiefProblem\TravellingThiefProblem.csproj", "{8A5D994F-3678-4CB5-9270-7178A716317B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TravellingThiefProblem", "TravellingThiefProblem\TravellingThiefProblem.csproj", "{8A5D994F-3678-4CB5-9270-7178A716317B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

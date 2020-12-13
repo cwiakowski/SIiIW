@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AntColonySystem;
 
 namespace TravellingThiefProblem.Models
 {
@@ -29,5 +30,7 @@ namespace TravellingThiefProblem.Models
             }
             return s;
         }
+
+        public Point ToPoint() => new Point(Id, (float)X, (float)Y);
     }
 }

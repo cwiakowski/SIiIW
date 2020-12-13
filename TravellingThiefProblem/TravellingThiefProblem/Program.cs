@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using ABCNet;
 using TravellingThiefProblem.Models;
 using TravellingThiefProblem.Operations;
 using TravellingThiefProblem.Services;
@@ -12,19 +13,21 @@ namespace TravellingThiefProblem
 {
     class Program
     {
+
+
         static void Main(string[] args)
         {
-            Jazda();
+            Jazda2();
             //Test();
             Console.WriteLine("done");
             Console.Read();
         }
 
-        public static void Jazda()
+        public static void Jazda2()
         {
-            var ttp = new TTPSolver();
-            ttp.Start();
-            ttp.SaveData();
+            var ttp = new TTPSolver(0);
+            ttp.StartAnt();
+            //ttp.SaveData();
         }
 
         private static void Test()

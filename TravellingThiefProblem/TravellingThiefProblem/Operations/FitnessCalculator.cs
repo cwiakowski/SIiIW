@@ -14,6 +14,9 @@ namespace TravellingThiefProblem.Operations
         /// <returns></returns>
         public double CalculateFitness(Thief thief, Problem problem)
         {
+            thief.Fitness = ThiefService.CalculatePathLength(thief.Path, problem.Cities);
+            return ThiefService.CalculatePathLength(thief.Path, problem.Cities);
+
             thief.Reset();
             var time = TimeTravel(thief, problem);
             var profit = Profit(thief);
